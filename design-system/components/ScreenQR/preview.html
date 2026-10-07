@@ -1,0 +1,47 @@
+<!-- @dsCard group="Màn hình" height=800 width=1280 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>ScreenQR</title></head>
+<body>
+<div id="root" class="cp" style="padding:0"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+var MENU=[
+ {code:'C01',name:'Cơm gà xối mỡ',price:35000,cat:'com'},{code:'C02',name:'Cơm rang dưa bò',price:38000,cat:'com'},
+ {code:'C05',name:'Cơm sườn nướng',price:38000,cat:'com',status:'soldout'},{code:'B03',name:'Bún bò Huế',price:40000,promo:'−10%'},
+ {code:'B04',name:'Phở gà',price:35000},{code:'A07',name:'Bánh mì trứng',price:15000,status:'low',stockLeft:3},
+ {code:'A09',name:'Khoai tây chiên',price:20000,student:'blocked'},{code:'N01',name:'Trà đào',price:15000},
+ {code:'N02',name:'Coca-Cola lon',price:12000,student:'blocked'},{code:'N05',name:'Sữa tươi ít đường',price:10000},
+ {code:'T01',name:'Sữa chua',price:8000},{code:'T03',name:'Hoa quả dầm',price:20000}];
+var TABS=[{id:'all',label:'Tất cả',count:42},{id:'com',label:'Cơm & món chính',count:12},{id:'bun',label:'Bún / Phở',count:6},{id:'an',label:'Ăn vặt',count:9},{id:'nuoc',label:'Đồ uống',count:11}];
+var TOP={canteen:'Canteen A — Nhà ăn chính',counter:'2',shift:'Sáng 06:30–10:30',staff:'Nguyễn Thị Lan'};
+function grid(student, qty){ qty=qty||{}; return h('div',{className:'cp-menu-grid',style:{overflow:'auto',paddingTop:8,paddingRight:8}}, MENU.map(function(m){
+  var st = m.status || (student && m.student) || 'available';
+  return h(C.MenuItemCard,Object.assign({key:m.code},m,{status:st,qty:qty[m.code]||0,blockedReason:'Chặn với HS'}));})); }
+function mount(x){ ReactDOM.createRoot(document.getElementById('root')).render(x); }
+function app(){ return h.apply(null,['div',{className:'cp-app',style:{height:800,minHeight:0,position:'relative'}}].concat([].slice.call(arguments))); }
+
+var LINES=[{name:'Cơm gà xối mỡ',price:35000,qty:2},{name:'Trà đào',price:15000,qty:1,note:'ít đá'},{name:'Sữa chua',price:8000,qty:1}];
+function checkout(right, title){ return app(h(C.TopBar,TOP),
+  h('div',{style:{flex:1,display:'grid',gridTemplateColumns:'400px 1fr',gap:16,padding:16,minHeight:0}},
+    h('div',{className:'cp-pos-side'},
+      h(C.BuyerCard,{role:'guest'}),
+      h(C.OrderCart,{orderCode:'DH-0412',staff:'Lan',counter:'2',createdAt:'10:42 · 05/10',lines:LINES,discount:{label:'KM combo trưa −10%',amount:9300},badge:h(C.StatusBadge,{tone:'warning'},'Chờ thanh toán')})),
+    h('div',{className:'cp-panel',style:{overflow:'auto',display:'grid',gap:20,alignContent:'start'}},
+      h('div',{className:'cp-dialog-head'},h('h2',{className:'cp-h'},title),h(C.Button,{variant:'ghost',icon:'undo'},'Đổi phương thức')),
+      right))); }
+
+mount(checkout(h('div',{className:'cp-stack',style:{gap:20}},
+  h(C.QRPayment,{total:83700,orderCode:'DH-0412',state:'pending',elapsed:'00:42'},
+    h('div',{className:'cp-row'},h(C.Button,{variant:'secondary',icon:'sync'},'Kiểm tra lại với ngân hàng'),h(C.Button,{variant:'ghost',icon:'x'},'Hủy chờ'))),
+  h('div',{style:{borderTop:'1px solid var(--line)',paddingTop:16}},
+    h('div',{className:'cp-h2',style:{marginBottom:8}},'Các trạng thái khác'),
+    h('div',{className:'cp-row'},
+      h(C.StatusBadge,{tone:'warning'},'Chờ thanh toán'),
+      h(C.StatusBadge,{tone:'success'},'Thành công — đã kiểm chứng'),
+      h(C.StatusBadge,{tone:'danger'},'Sai số tiền'),
+      h(C.StatusBadge,{tone:'danger'},'Giao dịch trùng'),
+      h(C.StatusBadge,{tone:'danger'},'Chưa khớp đơn → tra soát')))),'Thanh toán QR ngân hàng'))
+</script>
+</body>
+</html>

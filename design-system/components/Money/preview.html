@@ -1,0 +1,18 @@
+<!-- @dsCard group="Nền tảng" height=120 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>Money</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'cp-row',style:{gap:24,alignItems:'baseline'}},
+  h(C.Money,{value:125000,size:'xl'}),
+  h(C.Money,{value:45000,size:'lg'}),
+  h(C.Money,{value:25000}),
+  h(C.Money,{value:30000,strike:true}),
+  h(C.Money,{value:-5000,tone:'accent'}),
+  h(C.Money,{value:12000,tone:'brand'})));
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!-- @dsCard group="Danh sách" height=110 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>InlineNote</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'cp-stack',style:{gap:8}},
+  h(C.InlineNote,null,'Khởi động ca có thể bị giới hạn khi chưa đếm két'),
+  h(C.InlineNote,{tone:'danger'},'Không đủ quyền hoàn tiền mặt cho đơn này'),
+  h(C.InlineNote,{tone:'info'},'Tiền thu ghi vào ca sáng của NV Lan')));
+</script>
+</body>
+</html>

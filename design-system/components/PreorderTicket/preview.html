@@ -1,0 +1,15 @@
+<!-- @dsCard group="Đơn đặt trước" height=330 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>PreorderTicket</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,alignItems:'start'}},
+  h(C.PreorderTicket,{code:'APP-1187',buyer:'Lê Gia Bảo · 11A1',status:'new',pickupAt:'11:30',counter:'2',eta:'+30′ → 11:52',items:[{qty:1,name:'Cơm sườn nướng'},{qty:1,name:'Nước cam'}]}),
+  h(C.PreorderTicket,{code:'APP-1183',buyer:'Nguyễn Hải Yến · SV K19',status:'preparing',pickupAt:'11:15',counter:'1',eta:'+35′ → 11:40',items:[{qty:2,name:'Bún chả'}]}),
+  h(C.PreorderTicket,{code:'LOP-10A2',source:'class',buyer:'Lớp 10A2 — GVCN Đỗ Thảo',status:'ready',pickupAt:'11:00',counter:'3',items:[{qty:38,name:'Suất trưa tiêu chuẩn'},{qty:2,name:'Suất chay'}]})));
+</script>
+</body>
+</html>

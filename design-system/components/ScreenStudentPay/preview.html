@@ -1,0 +1,50 @@
+<!-- @dsCard group="Màn hình" height=800 width=1280 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>ScreenStudentPay</title></head>
+<body>
+<div id="root" class="cp" style="padding:0"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+var MENU=[
+ {code:'C01',name:'Cơm gà xối mỡ',price:35000,cat:'com'},{code:'C02',name:'Cơm rang dưa bò',price:38000,cat:'com'},
+ {code:'C05',name:'Cơm sườn nướng',price:38000,cat:'com',status:'soldout'},{code:'B03',name:'Bún bò Huế',price:40000,promo:'−10%'},
+ {code:'B04',name:'Phở gà',price:35000},{code:'A07',name:'Bánh mì trứng',price:15000,status:'low',stockLeft:3},
+ {code:'A09',name:'Khoai tây chiên',price:20000,student:'blocked'},{code:'N01',name:'Trà đào',price:15000},
+ {code:'N02',name:'Coca-Cola lon',price:12000,student:'blocked'},{code:'N05',name:'Sữa tươi ít đường',price:10000},
+ {code:'T01',name:'Sữa chua',price:8000},{code:'T03',name:'Hoa quả dầm',price:20000}];
+var TABS=[{id:'all',label:'Tất cả',count:42},{id:'com',label:'Cơm & món chính',count:12},{id:'bun',label:'Bún / Phở',count:6},{id:'an',label:'Ăn vặt',count:9},{id:'nuoc',label:'Đồ uống',count:11}];
+var TOP={canteen:'Canteen A — Nhà ăn chính',counter:'2',shift:'Sáng 06:30–10:30',staff:'Nguyễn Thị Lan'};
+function grid(student, qty){ qty=qty||{}; return h('div',{className:'cp-menu-grid',style:{overflow:'auto',paddingTop:8,paddingRight:8}}, MENU.map(function(m){
+  var st = m.status || (student && m.student) || 'available';
+  return h(C.MenuItemCard,Object.assign({key:m.code},m,{status:st,qty:qty[m.code]||0,blockedReason:'Chặn với HS'}));})); }
+function mount(x){ ReactDOM.createRoot(document.getElementById('root')).render(x); }
+function app(){ return h.apply(null,['div',{className:'cp-app',style:{height:800,minHeight:0,position:'relative'}}].concat([].slice.call(arguments))); }
+
+var LINES=[{name:'Bún bò Huế',price:40000,qty:1},{name:'Sữa tươi ít đường',price:10000,qty:1}];
+function line(label, v, tone, sub){ return h('div',{className:'cp-sum-row',style:{fontSize:15,padding:'10px 0',borderBottom:'1px solid var(--line)'}},h('span',null,label,sub?h('div',{className:'cp-muted',style:{fontSize:12}},sub):null),h(C.Money,{value:v,tone:tone})); }
+mount(app(h(C.TopBar,TOP),
+  h('div',{className:'cp-pos',style:{filter:'saturate(.6)',opacity:.5}},
+    h('div',{className:'cp-pos-main'},h(C.CategoryTabs,{items:TABS}),grid(true,{B03:1,N05:1})),
+    h('div',{className:'cp-pos-side'},h(C.OrderCart,{orderCode:'DH-0415',staff:'Lan',counter:'2',createdAt:'10:51 · 05/10',lines:LINES,discount:{label:'KM bún bò −10%',amount:4000}}))),
+  h('div',{className:'cp-scrim'},
+    h('div',{className:'cp-dialog',style:{width:760}},
+      h('div',{className:'cp-dialog-head'},h('h2',{className:'cp-h'},'Thanh toán bằng ví'),h(C.Button,{variant:'ghost',icon:'x','aria-label':'Đóng'})),
+      h('div',{style:{display:'grid',gridTemplateColumns:'300px 1fr',gap:24}},
+        h(C.BuyerCard,{name:'Trần Minh Khôi',role:'student',klass:'Lớp 8A3',code:'HS-208317',method:'card',real:28000,bonus:10000,limit:{used:12000,max:60000}}),
+        h('div',null,
+          h('div',{className:'cp-due',style:{marginBottom:8}},h('span',{className:'cp-h2'},'Phải thu'),h(C.Money,{value:46000,size:'lg'})),
+          h(C.StatusBadge,{tone:'success'},'Không có món bị chặn · trong hạn mức (còn 48.000 ₫)'),
+          h('div',{style:{marginTop:8}},
+            line('Trừ tiền thưởng',-10000,'accent','Ưu tiên dùng trước theo chính sách Canteen'),
+            line('Trừ tiền thật',-28000,'brand','Hết số dư tiền thật'),
+            h('div',{className:'cp-change is-short',style:{marginTop:12}},h('label',null,h(C.Icon,{name:'alert'}),'Còn thiếu — thu bổ sung'),h(C.Money,{value:8000,size:'lg'}))),
+          h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:12}},
+            h(C.Button,{variant:'secondary',icon:'cash',size:'lg','aria-pressed':'true',style:{borderColor:'var(--brand)',borderWidth:2,color:'var(--brand)'}},'Bổ sung tiền mặt'),
+            h(C.Button,{variant:'secondary',icon:'qr',size:'lg'},'Bổ sung QR')))),
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',gap:16}},
+        h('div',{className:'cp-note'},h(C.Icon,{name:'receipt',size:14}),'Biên lai tách: thưởng 10.000 ₫ · thật 28.000 ₫ · tiền mặt 8.000 ₫'),
+        h(C.Button,{size:'lg',icon:'check'},'Trừ ví & thu 8.000 ₫ tiền mặt'))))))
+</script>
+</body>
+</html>

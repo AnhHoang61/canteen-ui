@@ -1,0 +1,16 @@
+<!-- @dsCard group="Người mua" height=360 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>BuyerCard</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,alignItems:'start'}},
+  h(C.BuyerCard,{name:'Trần Minh Khôi',role:'student',klass:'Lớp 8A3',code:'HS-208317',method:'card',real:42000,bonus:10000,limit:{used:38000,max:50000},blocked:['Nước ngọt có ga','Đồ chiên rán']}),
+  h('div',{className:'cp-stack'},
+    h(C.BuyerCard,{name:'Phạm Thu Hà',role:'teacher',code:'GV-0451',method:'qr',real:315000,bonus:20000}),
+    h(C.BuyerCard,{role:'guest'}))));
+</script>
+</body>
+</html>

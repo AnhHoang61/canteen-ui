@@ -1,0 +1,12 @@
+<!-- @dsCard group="Khung ứng dụng" height=80 width=1200 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>TopBar</title></head>
+<body>
+<div id="root" class="cp" style="padding:0"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h(C.TopBar,{canteen:'Canteen A — Nhà ăn chính',counter:'2',shift:'Sáng 06:30–10:30',staff:'Nguyễn Thị Lan'}));
+</script>
+</body>
+</html>

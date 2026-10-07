@@ -1,0 +1,50 @@
+<!-- @dsCard group="Màn hình" height=800 width=1280 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>ScreenRefund</title></head>
+<body>
+<div id="root" class="cp" style="padding:0"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+var MENU=[
+ {code:'C01',name:'Cơm gà xối mỡ',price:35000,cat:'com'},{code:'C02',name:'Cơm rang dưa bò',price:38000,cat:'com'},
+ {code:'C05',name:'Cơm sườn nướng',price:38000,cat:'com',status:'soldout'},{code:'B03',name:'Bún bò Huế',price:40000,promo:'−10%'},
+ {code:'B04',name:'Phở gà',price:35000},{code:'A07',name:'Bánh mì trứng',price:15000,status:'low',stockLeft:3},
+ {code:'A09',name:'Khoai tây chiên',price:20000,student:'blocked'},{code:'N01',name:'Trà đào',price:15000},
+ {code:'N02',name:'Coca-Cola lon',price:12000,student:'blocked'},{code:'N05',name:'Sữa tươi ít đường',price:10000},
+ {code:'T01',name:'Sữa chua',price:8000},{code:'T03',name:'Hoa quả dầm',price:20000}];
+var TABS=[{id:'all',label:'Tất cả',count:42},{id:'com',label:'Cơm & món chính',count:12},{id:'bun',label:'Bún / Phở',count:6},{id:'an',label:'Ăn vặt',count:9},{id:'nuoc',label:'Đồ uống',count:11}];
+var TOP={canteen:'Canteen A — Nhà ăn chính',counter:'2',shift:'Sáng 06:30–10:30',staff:'Nguyễn Thị Lan'};
+function grid(student, qty){ qty=qty||{}; return h('div',{className:'cp-menu-grid',style:{overflow:'auto',paddingTop:8,paddingRight:8}}, MENU.map(function(m){
+  var st = m.status || (student && m.student) || 'available';
+  return h(C.MenuItemCard,Object.assign({key:m.code},m,{status:st,qty:qty[m.code]||0,blockedReason:'Chặn với HS'}));})); }
+function mount(x){ ReactDOM.createRoot(document.getElementById('root')).render(x); }
+function app(){ return h.apply(null,['div',{className:'cp-app',style:{height:800,minHeight:0,position:'relative'}}].concat([].slice.call(arguments))); }
+
+function radio(label, sub, on){ return h('label',{style:{display:'flex',gap:12,alignItems:'flex-start',padding:12,borderRadius:'var(--radius-md)',border:on?'2px solid var(--brand)':'1px solid var(--line-strong)',background:on?'var(--brand-soft)':'var(--surface-raised)',cursor:'pointer'}},
+  h('input',{type:'radio',name:'m',defaultChecked:on,style:{marginTop:4,accentColor:'var(--brand)'}}),h('span',null,h('strong',{style:{display:'block'}},label),h('span',{className:'cp-muted',style:{fontSize:13}},sub))); }
+function item(name, qty, price, on){ return h('tr',null,h('td',null,h('input',{type:'checkbox',defaultChecked:on,style:{width:18,height:18,accentColor:'var(--brand)'}})),h('td',null,name),h('td',{className:'r cp-num'},qty),h('td',{className:'r'},h(C.Money,{value:price*qty}))); }
+mount(app(h(C.TopBar,TOP),
+  h('div',{style:{flex:1,display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,padding:16,minHeight:0}},
+    h('div',{className:'cp-panel',style:{display:'grid',gap:16,alignContent:'start'}},
+      h('h1',{className:'cp-h'},'Hoàn / hủy tại quầy'),
+      h('div',{className:'cp-search'},h(C.Field,{icon:'search',defaultValue:'DH-0398',hint:'Tra cứu trong phạm vi: Canteen A · Quầy 1–3 · 7 ngày gần nhất'}),h(C.Button,{variant:'secondary'},'Tìm')),
+      h('div',{style:{border:'1px solid var(--line)',borderRadius:'var(--radius-md)',padding:16,display:'grid',gap:12}},
+        h('div',{className:'cp-row',style:{justifyContent:'space-between'}},h('span',{className:'cp-ticket-code'},'DH-0398'),h(C.StatusBadge,{tone:'success'},'Đã thanh toán · Ví')),
+        h('div',{className:'cp-muted',style:{fontSize:13}},'Trần Minh Khôi · 8A3 · NV Lan · Quầy 2 · 09:12 05/10'),
+        h('table',{className:'cp-table'},h('thead',null,h('tr',null,h('th',null,''),h('th',null,'Món'),h('th',{className:'r'},'SL'),h('th',{className:'r'},'Tiền'))),
+          h('tbody',null,item('Cơm rang dưa bò',1,38000,true),item('Trà đào',1,15000,false),h('tr',{className:'is-total'},h('td',null),h('td',null,'Đã trả: thưởng 5.000 · thật 48.000'),h('td',null),h('td',{className:'r'},h(C.Money,{value:53000}))))))),
+    h('div',{className:'cp-panel',style:{display:'grid',gap:16,alignContent:'start'}},
+      h('div',{className:'cp-h2'},'Yêu cầu hoàn 1 món'),
+      h('div',{className:'cp-due'},h('span',null,'Số tiền hoàn'),h(C.Money,{value:38000,size:'lg'})),
+      h(C.Field,{label:'Lý do',as:'select',options:['Món lỗi / không đạt chất lượng','Nhập sai món','Khách đổi ý','Khác']}),
+      h(C.Field,{label:'Ghi chú',as:'textarea',rows:2,placeholder:'Mô tả ngắn…'}),
+      h('div',{className:'cp-stack',style:{gap:8}},h('div',{style:{font:'600 13px/18px var(--font-sans)'}},'Hoàn về'),
+        radio('Ví người mua','Hoàn đúng tỷ lệ: thưởng 3.585 ₫ · thật 34.415 ₫',true),
+        radio('Tiền mặt','Trừ vào tiền mặt của ca hiện tại',false),
+        radio('Chuyển khoản','Theo phương thức đã duyệt — kế toán xử lý',false)),
+      h('div',{className:'cp-note'},h(C.Icon,{name:'user',size:14}),'Người xử lý: Nguyễn Thị Lan (NV0123). Hoàn > 50.000 ₫ hoặc sau 24h cần quản lý duyệt.'),
+      h('div',{className:'cp-row',style:{justifyContent:'flex-end'}},h(C.Button,{variant:'ghost'},'Hủy bỏ'),h(C.Button,{variant:'danger',icon:'undo',size:'lg'},'Thực hiện hoàn 38.000 ₫'))))))
+</script>
+</body>
+</html>

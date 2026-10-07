@@ -1,0 +1,1794 @@
+<title>Canteen POS dùng thử</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+<style>
+:root,:root[data-theme="dark"]{--surface:#f4f5f7;--surface-raised:#ffffff;--surface-sunken:#f4f5f7;--line:#eceef1;--line-strong:#8e939b;--ink:#1d1f24;--ink-muted:#60656d;--brand:#1d1f24;--on-brand:#ffffff;--brand-soft:#e9f1fd;--accent:#f5a623;--on-accent:#1d1f24;--accent-soft:#fdf3e1;--accent-ink:#946200;--success:#0f7a5c;--success-soft:#e3f5ee;--warning:#9a4f00;--warning-soft:#fdeedb;--danger:#c0281b;--danger-soft:#fde8e6;--info:#1a62c2;--info-soft:#e9f1fd;--focus:#1a62c2;--qr-ink:#111111;--qr-ground:#ffffff;--shadow-1:none;--shadow-2:0 8px 24px rgba(29,31,36,0.12);--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--tap-min:48px;--tap-lg:56px;--cart-width:400px;--radius-sm:6px;--radius-md:10px;--radius-lg:12px;--radius-pill:999px;--font-sans:Roboto, "Segoe UI", system-ui, -apple-system, sans-serif;color-scheme:light}
+body{background:var(--surface);color:var(--ink)}
+
+/* ---------- base ---------- */
+.cp, .cp * { box-sizing: border-box; }
+body { margin: 0; background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 16px; line-height: 22px; -webkit-font-smoothing: antialiased; }
+.cp-num { font-variant-numeric: tabular-nums; }
+.cp-muted { color: var(--ink-muted); }
+.cp-row { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+.cp-stack { display: flex; flex-direction: column; gap: var(--space-3); }
+.cp-pad { padding: var(--space-4); }
+.cp-ico { flex: none; }
+:where(.cp) :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- Button ---------- */
+.cp-btn { font: 700 16px/22px var(--font-sans); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--tap-min); padding: 0 var(--space-4); border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer; white-space: nowrap; }
+.cp-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.cp-btn-lg { min-height: var(--tap-lg); font-size: 18px; padding: 0 var(--space-5); }
+.cp-btn-sm { min-height: 36px; font-size: 13px; padding: 0 var(--space-3); }
+.cp-btn-block { display: flex; width: 100%; }
+.cp-btn-primary { background: var(--brand); color: var(--on-brand); }
+.cp-btn-secondary { background: var(--surface-raised); color: var(--ink); border-color: var(--line); }
+.cp-btn-secondary .cp-ico, .cp-btn-ghost .cp-ico { color: var(--info); }
+.cp-btn-ghost { background: transparent; color: var(--ink); }
+.cp-btn-ghost:hover { background: var(--surface-sunken); }
+.cp-btn-accent { background: var(--accent); color: var(--on-accent); }
+.cp-btn-danger { background: var(--danger-soft); color: var(--danger); }
+.cp-btn:disabled { background: var(--line); color: var(--ink-muted); border-color: transparent; cursor: not-allowed; }
+
+/* ---------- StatusBadge ---------- */
+.cp-badge { display: inline-flex; align-items: center; gap: var(--space-1); font: 500 13px/18px var(--font-sans); padding: 3px 8px; border-radius: var(--radius-sm); white-space: nowrap; }
+.cp-badge .cp-dot { width: 8px; height: 8px; border-radius: var(--radius-pill); background: currentColor; }
+.cp-badge-neutral { background: var(--surface-sunken); color: var(--ink-muted); }
+.cp-badge-brand { background: var(--brand-soft); color: var(--brand); }
+.cp-badge-accent { background: var(--accent-soft); color: var(--accent-ink); }
+.cp-badge-success { background: var(--success-soft); color: var(--success); }
+.cp-badge-warning { background: var(--warning-soft); color: var(--warning); }
+.cp-badge-danger { background: var(--danger-soft); color: var(--danger); }
+.cp-badge-info { background: var(--info-soft); color: var(--info); }
+
+/* ---------- Money ---------- */
+.cp-money { font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
+.cp-money-lg { font-size: 26px; line-height: 32px; font-weight: 700; }
+.cp-money-xl { font-size: 40px; line-height: 44px; font-weight: 700; letter-spacing: -0.02em; }
+.cp-money-strike { text-decoration: line-through; color: var(--ink-muted); }
+.cp-money-accent { color: var(--accent-ink); }
+.cp-money-brand { color: var(--brand); }
+.cp-money-danger { color: var(--danger); }
+.cp-money-success { color: var(--success); }
+
+/* ---------- TopBar ---------- */
+.cp-top { display: flex; align-items: center; gap: var(--space-3); height: 60px; padding: 0 var(--space-4); background: var(--surface); }
+.cp-top-name { font: 700 19px/24px var(--font-sans); letter-spacing: -0.01em; margin-right: var(--space-2); white-space: nowrap; }
+.cp-top-name b { color: var(--info); }
+.cp-chip { display: inline-flex; align-items: center; gap: 6px; font: 600 13px/18px var(--font-sans); padding: 6px 10px; border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--ink); white-space: nowrap; }
+.cp-chip .cp-ico { color: var(--info); }
+.cp-chip span { color: var(--ink-muted); font-weight: 500; }
+.cp-top-spacer { flex: 1; }
+.cp-top-user { display: flex; align-items: center; gap: var(--space-2); font: 600 14px/20px var(--font-sans); white-space: nowrap; }
+.cp-avatar { width: 32px; height: 32px; border-radius: var(--radius-pill); background: var(--info-soft); color: var(--info); display: grid; place-items: center; font: 700 13px/1 var(--font-sans); }
+
+/* ---------- CategoryTabs ---------- */
+.cp-tabs { display: flex; gap: var(--space-2); overflow-x: auto; padding-bottom: 2px; }
+.cp-tab { font: 500 15px/20px var(--font-sans); min-height: var(--tap-min); padding: 0 var(--space-4); border-radius: var(--radius-pill); border: 1px solid transparent; background: var(--surface-raised); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); white-space: nowrap; }
+.cp-tab small { font: 500 12px/16px var(--font-sans); color: var(--ink-muted); }
+.cp-tab[aria-selected="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.cp-tab[aria-selected="true"] small { color: var(--on-brand); opacity: .85; }
+
+/* ---------- MenuItemCard ---------- */
+.cp-menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: var(--space-3); }
+.cp-item { position: relative; text-align: left; display: flex; flex-direction: column; gap: var(--space-2); min-height: 124px; padding: var(--space-3); border-radius: var(--radius-lg); border: 0; background: var(--surface-raised); color: var(--ink); box-shadow: var(--shadow-1); cursor: pointer; font: inherit; }
+.cp-item:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.cp-item.has-media { min-height: 214px; }
+.cp-item-media { flex: none; align-self: stretch; display: grid; place-items: center; height: 88px; border-radius: var(--radius-md); overflow: hidden; background: var(--surface-sunken); color: var(--ink-muted); }
+.cp-item-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cp-item.is-soldout .cp-item-media img { filter: grayscale(1); opacity: .6; }
+.cp-item-code { font: 500 12px/16px var(--font-sans); color: var(--ink-muted); }
+.cp-item-name { font: 700 16px/22px var(--font-sans); flex: 1; }
+.cp-item-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.cp-item-stock { font: 500 12px/16px var(--font-sans); color: var(--ink-muted); }
+.cp-item-qty { position: absolute; top: -8px; right: -8px; min-width: 28px; height: 28px; padding: 0 8px; border-radius: var(--radius-pill); background: var(--accent); color: var(--on-accent); font: 700 14px/28px var(--font-sans); text-align: center; box-shadow: var(--shadow-1); }
+.cp-item.is-selected { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.cp-item.is-soldout, .cp-item.is-blocked { cursor: not-allowed; box-shadow: none; background: var(--line); }
+.cp-item.is-soldout .cp-item-name, .cp-item.is-soldout .cp-money { color: var(--ink-muted); }
+.cp-item.is-blocked { background: var(--surface-raised); box-shadow: inset 0 0 0 1.5px var(--danger); }
+
+/* ---------- OrderCart ---------- */
+.cp-cart { display: flex; flex-direction: column; background: var(--surface-raised); border: 0; border-radius: var(--radius-lg); overflow: hidden; min-height: 0; }
+.cp-cart-head { padding: var(--space-4); border-bottom: 1px solid var(--line); }
+.cp-cart-title { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font: 700 18px/24px var(--font-sans); }
+.cp-cart-meta { margin-top: var(--space-1); font: 500 12px/16px var(--font-sans); color: var(--ink-muted); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.cp-cart-lines { flex: 1; overflow: auto; padding: 0 var(--space-4); }
+.cp-line { display: grid; grid-template-columns: 1fr auto 76px; gap: var(--space-3); align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.cp-line:last-child { border-bottom: 0; }
+.cp-line-name { font: 500 16px/22px var(--font-sans); }
+.cp-line-unit { font: 500 12px/16px var(--font-sans); color: var(--ink-muted); }
+.cp-line-total { text-align: right; align-self: center; }
+.cp-stepper { display: inline-flex; align-items: center; background: var(--surface-sunken); border-radius: var(--radius-md); overflow: hidden; }
+.cp-stepper button { width: 40px; height: 40px; border: 0; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+.cp-stepper button:hover { background: var(--line); }
+.cp-stepper output { min-width: 32px; text-align: center; font: 600 15px/40px var(--font-sans); }
+.cp-cart-sum { padding: var(--space-3) var(--space-4); background: var(--surface-raised); border-top: 1px solid var(--line); display: grid; gap: 6px; }
+.cp-sum-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-2); font-size: 14px; }
+.cp-sum-row.is-discount { color: var(--accent-ink); }
+.cp-sum-row.is-total { font: 700 16px/22px var(--font-sans); padding-top: 6px; border-top: 1px solid var(--line); }
+.cp-cart-foot { padding: var(--space-3) var(--space-4) var(--space-4); display: grid; gap: var(--space-2); }
+.cp-cart-empty { padding: var(--space-6) var(--space-4); text-align: center; color: var(--ink-muted); }
+
+/* ---------- BuyerCard ---------- */
+.cp-buyer { background: var(--surface-raised); border: 0; border-radius: var(--radius-lg); padding: var(--space-4); display: grid; gap: var(--space-3); }
+.cp-buyer-head { display: flex; gap: var(--space-3); align-items: center; }
+.cp-buyer-photo { width: 52px; height: 52px; border-radius: var(--radius-pill); background: var(--info-soft); color: var(--info); display: grid; place-items: center; font: 700 18px/1 var(--font-sans); flex: none; }
+.cp-buyer-name { font: 700 18px/24px var(--font-sans); }
+.cp-buyer-sub { font: 500 13px/18px var(--font-sans); color: var(--ink-muted); }
+.cp-wallet { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.cp-wallet-cell { border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); background: var(--brand-soft); }
+.cp-wallet-cell.is-bonus { background: var(--accent-soft); }
+.cp-wallet.is-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cp-wallet-cell.is-limit { background: var(--surface-sunken); }
+.cp-wallet-cell label { display: block; font: 400 13px/18px var(--font-sans); color: var(--ink-muted); }
+.cp-meter { height: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
+.cp-meter i { display: block; height: 100%; background: var(--brand); border-radius: var(--radius-pill); }
+.cp-meter.is-high i { background: var(--warning); }
+.cp-meter.is-over i { background: var(--danger); }
+.cp-limit-row { display: flex; justify-content: space-between; font: 500 13px/18px var(--font-sans); color: var(--ink-muted); margin-bottom: 6px; }
+.cp-blocked { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; font: 500 13px/18px var(--font-sans); }
+
+/* ---------- IdentifyPanel ---------- */
+.cp-identify { display: grid; gap: var(--space-3); }
+.cp-id-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.cp-id-method { min-height: 88px; border-radius: var(--radius-lg); border: 0; background: var(--surface-raised); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; font: 600 14px/20px var(--font-sans); cursor: pointer; }
+.cp-id-method .cp-ico { color: var(--info); }
+.cp-id-method[aria-pressed="true"] { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.cp-id-status { border-radius: var(--radius-md); padding: var(--space-3); display: flex; gap: var(--space-2); align-items: center; font: 500 14px/20px var(--font-sans); background: var(--surface-sunken); color: var(--ink-muted); }
+.cp-id-status.is-reading { background: var(--info-soft); color: var(--info); }
+.cp-id-status.is-found { background: var(--success-soft); color: var(--success); }
+.cp-id-status.is-error { background: var(--danger-soft); color: var(--danger); }
+
+/* ---------- Field ---------- */
+.cp-field { display: grid; gap: 6px; min-width: 0; }
+.cp-field > label { font: 400 15px/20px var(--font-sans); color: var(--ink); }
+.cp-field-box { display: flex; align-items: center; min-height: 56px; border: 1px solid transparent; border-radius: var(--radius-lg); background: var(--surface-raised); padding: 0 var(--space-4); gap: var(--space-2); }
+:where(.cp-panel, .cp-dialog, .cp-card, .cp-cash) .cp-field-box { background: var(--surface-sunken); }
+.cp-field-box .cp-ico { color: var(--info); }
+.cp-field-box:focus-within { outline: 3px solid var(--focus); outline-offset: 1px; }
+.cp-field-box input, .cp-field-box select, .cp-field-box textarea { flex: 1; min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font: 700 17px/24px var(--font-sans); padding: 0; }
+.cp-field-box input::placeholder, .cp-field-box textarea::placeholder { color: var(--ink-muted); font-weight: 500; }
+.cp-field-box textarea { padding: var(--space-2) 0; resize: none; }
+.cp-field-box select { font-size: 16px; font-weight: 500; cursor: pointer; }
+.cp-field-box.is-num input { font-size: 20px; text-align: right; font-variant-numeric: tabular-nums; }
+.cp-field-suffix { color: var(--ink-muted); font: 500 14px/20px var(--font-sans); }
+.cp-field-hint { font: 400 13px/18px var(--font-sans); color: var(--ink-muted); }
+.cp-field.is-error .cp-field-box { border-color: var(--danger); }
+.cp-field.is-error .cp-field-hint { color: var(--danger); }
+
+/* ---------- CashPayment ---------- */
+.cp-cash { display: grid; gap: var(--space-4); }
+.cp-cash-main { display: grid; gap: var(--space-4); align-content: start; }
+.cp-cash.is-wide { grid-template-columns: 1fr 1fr; gap: var(--space-5); align-items: start; }
+.cp-cash.is-wide .cp-keypad button { min-height: 72px; }
+.cp-due { display: flex; justify-content: space-between; align-items: baseline; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--surface-sunken); }
+.cp-quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
+.cp-quick button { min-height: var(--tap-min); border-radius: var(--radius-md); border: 0; background: var(--surface-sunken); color: var(--ink); font: 600 15px/22px var(--font-sans); cursor: pointer; }
+.cp-quick button.is-exact { background: var(--info-soft); color: var(--info); }
+.cp-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.cp-keypad button { min-height: 56px; border-radius: var(--radius-md); border: 0; background: var(--surface-sunken); color: var(--ink); font: 600 22px/1 var(--font-sans); cursor: pointer; }
+.cp-keypad button:active { background: var(--line); }
+.cp-change { display: flex; justify-content: space-between; align-items: center; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--success-soft); color: var(--success); }
+.cp-change.is-short { background: var(--danger-soft); color: var(--danger); }
+.cp-change label { font: 600 15px/22px var(--font-sans); display: flex; gap: var(--space-2); align-items: center; }
+
+/* ---------- QRPayment ---------- */
+.cp-qr { display: grid; grid-template-columns: auto 1fr; gap: var(--space-5); align-items: start; }
+.cp-qr-code { padding: var(--space-3); background: var(--qr-ground); border-radius: var(--radius-md); border: 1px solid var(--line); line-height: 0; }
+.cp-qr-code rect { fill: var(--qr-ink); }
+.cp-qr-info { display: grid; gap: var(--space-3); }
+.cp-kv { display: grid; grid-template-columns: auto 1fr; gap: 6px var(--space-4); font-size: 14px; }
+.cp-kv dt { color: var(--ink-muted); }
+.cp-kv dd { margin: 0; font-weight: 600; text-align: right; }
+.cp-qr-state { border-radius: var(--radius-md); padding: var(--space-3); display: flex; gap: var(--space-3); align-items: flex-start; }
+.cp-qr-state strong { display: block; font: 600 15px/22px var(--font-sans); }
+.cp-qr-state p { margin: 2px 0 0; font: 500 13px/18px var(--font-sans); }
+.cp-qr-state.is-pending, .cp-qr-state.is-offline { background: var(--warning-soft); color: var(--warning); }
+.cp-qr-state.is-success { background: var(--success-soft); color: var(--success); }
+.cp-qr-state.is-check { background: var(--danger-soft); color: var(--danger); }
+.cp-note { font: 500 12px/16px var(--font-sans); color: var(--ink-muted); display: flex; gap: 6px; align-items: flex-start; }
+
+/* ---------- PreorderTicket ---------- */
+.cp-ticket { background: var(--surface-raised); border: 0; border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); display: grid; gap: var(--space-2); box-shadow: var(--shadow-1); }
+.cp-ticket-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.cp-ticket-code { font: 600 16px/22px var(--font-sans); white-space: nowrap; }
+.cp-ticket-cash { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--accent-soft); color: var(--accent-ink); font: 500 14px/20px var(--font-sans); }
+.cp-ticket-cash span { flex: 1; }
+.cp-ticket-cash .cp-money { font-weight: 700; color: var(--accent-ink); }
+.cp-ticket-who { font: 700 16px/22px var(--font-sans); }
+.cp-ticket-items { margin: 0; padding: 0; list-style: none; font-size: 14px; line-height: 20px; color: var(--ink); }
+.cp-ticket-items li { display: flex; gap: var(--space-2); }
+.cp-ticket-items b { font-family: var(--font-sans); min-width: 28px; }
+.cp-ticket-time { display: flex; gap: var(--space-3); flex-wrap: wrap; font: 500 13px/18px var(--font-sans); color: var(--ink-muted); }
+.cp-ticket-time strong { color: var(--ink); font-family: var(--font-sans); }
+.cp-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.cp-steps i { height: 4px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.cp-steps i.on { background: var(--brand); }
+
+/* ---------- ShiftSummary ---------- */
+.cp-shift { display: grid; gap: var(--space-4); }
+.cp-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
+.cp-kpi { background: var(--surface-raised); border: 0; border-radius: var(--radius-md); padding: var(--space-3); }
+.cp-kpi label { display: block; font: 400 13px/18px var(--font-sans); color: var(--ink-muted); margin-bottom: 4px; }
+.cp-kpi .cp-money, .cp-kpi .cp-num { font-size: 20px; line-height: 26px; font-weight: 600; }
+.cp-table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--surface-raised); border-radius: var(--radius-md); overflow: hidden; }
+.cp-table th, .cp-table td { padding: 10px var(--space-3); border-bottom: 1px solid var(--line); text-align: left; }
+.cp-table th { font: 400 13px/18px var(--font-sans); color: var(--ink-muted); background: var(--surface-raised); }
+.cp-table td.r, .cp-table th.r { text-align: right; }
+.cp-table tr.is-total td { font-weight: 600; border-bottom: 0; }
+.cp-variance { border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.cp-variance.is-ok { background: var(--success-soft); color: var(--success); }
+.cp-variance.is-over { background: var(--warning-soft); color: var(--warning); }
+.cp-variance.is-short { background: var(--danger-soft); color: var(--danger); }
+
+/* ---------- OfflineBanner ---------- */
+.cp-offline { display: flex; align-items: center; gap: var(--space-3); padding: 10px var(--space-4); margin: 0 var(--space-4); border-radius: var(--radius-lg); background: var(--warning-soft); color: var(--warning); font: 500 14px/20px var(--font-sans); }
+.cp-offline strong { font-weight: 700; }
+.cp-offline .cp-top-spacer { flex: 1; }
+.cp-offline.is-syncing { background: var(--info-soft); color: var(--info); }
+
+/* ---------- Screens (layout helpers) ---------- */
+.cp-app { display: flex; flex-direction: column; height: 100vh; min-height: 720px; background: var(--surface); }
+.cp-pos { flex: 1; display: grid; grid-template-columns: 1fr var(--cart-width); gap: var(--space-4); padding: var(--space-4); min-height: 0; }
+.cp-pos-main { display: flex; flex-direction: column; gap: var(--space-3); min-height: 0; overflow: hidden; }
+.cp-pos-side { display: flex; flex-direction: column; gap: var(--space-3); min-height: 0; }
+.cp-pos-side .cp-cart { flex: 1; }
+.cp-search { display: flex; gap: var(--space-3); align-items: center; }
+.cp-search .cp-field { flex: 1; }
+.cp-panel { background: var(--surface-raised); border: 0; border-radius: var(--radius-lg); padding: var(--space-4); }
+.cp-h { margin: 0; font: 700 22px/28px var(--font-sans); }
+.cp-h2 { margin: 0; font: 700 18px/24px var(--font-sans); }
+.cp-scrim { position: absolute; inset: 0; background: rgba(12,14,13,0.45); display: grid; place-items: center; }
+.cp-dialog { background: var(--surface-raised); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); padding: var(--space-5); width: 640px; max-width: calc(100% - 32px); display: grid; gap: var(--space-4); }
+.cp-dialog-head { display: flex; justify-content: space-between; align-items: center; }
+
+/* ---------- List style (thẻ trắng + dòng có chevron) ---------- */
+.cp-section-label { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); font: 400 15px/20px var(--font-sans); color: var(--ink); margin: var(--space-5) 0 var(--space-3); }
+.cp-section-label:first-child { margin-top: 0; }
+.cp-section-label .cp-ico { color: var(--info); }
+.cp-section-label button { border: 0; background: none; padding: 4px; color: var(--info); cursor: pointer; display: inline-flex; }
+.cp-card { background: var(--surface-raised); border-radius: var(--radius-lg); padding: 0 var(--space-5); }
+.cp-card.is-padded { padding: var(--space-4) var(--space-5); }
+.cp-list-row { display: flex; align-items: center; gap: var(--space-4); width: 100%; min-height: 72px; padding: var(--space-4) 0; border: 0; border-bottom: 1px solid var(--line); background: none; color: var(--ink); text-align: left; font: inherit; }
+.cp-list-row:last-child { border-bottom: 0; }
+button.cp-list-row { cursor: pointer; }
+.cp-list-row:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.cp-list-row > .cp-ico:first-child { color: var(--info); }
+.cp-list-body { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.cp-list-title { font: 700 18px/24px var(--font-sans); }
+.cp-list-value { font: 400 16px/22px var(--font-sans); color: var(--ink-muted); }
+.cp-list-row .cp-chev { color: var(--ink-muted); }
+.cp-inline-note { display: flex; gap: 6px; align-items: flex-start; font: 400 14px/20px var(--font-sans); color: var(--accent-ink); }
+.cp-inline-note.is-danger { color: var(--danger); }
+.cp-inline-note.is-info { color: var(--info); }
+.cp-inline-note .cp-ico { margin-top: 2px; }
+.cp-nav { display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; height: 56px; }
+.cp-nav h1 { margin: 0; text-align: center; font: 500 20px/28px var(--font-sans); }
+.cp-nav button { width: 48px; height: 48px; border: 0; background: none; color: var(--ink); display: grid; place-items: center; cursor: pointer; border-radius: var(--radius-pill); }
+.cp-bottom-bar { position: sticky; bottom: 0; padding: var(--space-4) 0; background: linear-gradient(to top, var(--surface) 70%, transparent); }
+.cp-bottom-bar .cp-btn-primary { box-shadow: var(--shadow-2); }
+
+html, body { height: 100%; }
+#root { height: 100%; }
+.pt-app { height: 100%; min-height: 640px; position: relative; }
+.pt-main { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.pt-main > * { flex: 1; min-height: 0; }
+.pt-2col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-3); }
+.pt-2col > * { min-width: 0; }
+.cp-cart-foot .cp-btn, .pt-dialog .cp-btn { white-space: normal; text-align: center; }
+.pt-label { font: 400 15px/20px var(--font-sans); }
+
+/* top nav */
+.cp-top { flex-wrap: nowrap; overflow-x: auto; }
+.pt-nav { display: flex; gap: 4px; align-items: center; background: var(--surface-raised); border-radius: var(--radius-pill); padding: 4px; }
+.pt-nav-btn, .pt-net { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--ink); font: 500 14px/20px var(--font-sans); cursor: pointer; white-space: nowrap; }
+.pt-nav-btn .cp-ico, .pt-net .cp-ico { color: var(--info); }
+.pt-nav-btn[aria-selected="true"] { background: var(--brand); color: var(--on-brand); }
+.pt-nav-btn[aria-selected="true"] .cp-ico { color: var(--on-brand); }
+.pt-net { color: var(--ink-muted); }
+.pt-net:hover, .pt-nav-btn:hover:not([aria-selected="true"]) { background: var(--surface-sunken); }
+.pt-nav-btn:focus-visible, .pt-net:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.pt-count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--radius-pill); background: var(--accent); color: var(--on-accent); font: 700 12px/20px var(--font-sans); text-align: center; }
+.cp-offline { margin-top: 0; margin-bottom: var(--space-2); }
+
+/* sell */
+.pt-pos { overflow: hidden; }
+.pt-grid { overflow: auto; padding: 8px 8px 16px 0; align-content: start; }
+.cp-pos-side { overflow-y: auto; overflow-x: hidden; }
+.cp-pos-side .cp-cart { min-height: 320px; }
+.pt-demo { border: 1px dashed var(--line-strong); border-radius: var(--radius-md); padding: var(--space-3); display: grid; gap: var(--space-2); }
+.pt-demo-label { font: 500 12px/16px var(--font-sans); color: var(--ink-muted); text-transform: uppercase; letter-spacing: .06em; }
+
+/* dialog */
+.pt-scrim { position: fixed; z-index: 20; padding: var(--space-4); overflow: auto; }
+.pt-dialog { width: 920px; max-height: calc(100% - 16px); overflow: auto; }
+.pt-dialog-foot { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+.pt-wallet { display: grid; grid-template-columns: 300px 1fr; gap: var(--space-5); align-items: start; }
+.pt-split-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); padding: 10px 0; border-bottom: 1px solid var(--line); }
+.pt-split-row small { display: block; color: var(--ink-muted); font-size: 12px; }
+.cp-btn.pt-on { box-shadow: inset 0 0 0 2px var(--brand); background: var(--brand-soft); }
+
+/* pages */
+.pt-page { padding: var(--space-4); overflow: auto; display: flex; flex-direction: column; gap: var(--space-4); }
+.pt-pre-head { display: flex; gap: var(--space-5); align-items: center; flex-wrap: wrap; }
+.pt-rules { display: grid; grid-template-columns: repeat(3, 112px); gap: var(--space-2); }
+.pt-rule { padding: 8px 10px; border-radius: var(--radius-md); background: var(--surface-sunken); text-align: center; display: grid; }
+.pt-rule small { font: 400 12px/16px var(--font-sans); color: var(--ink-muted); }
+.pt-rule b { font-size: 18px; line-height: 24px; }
+.pt-rule.is-on { background: var(--brand); color: var(--on-brand); }
+.pt-rule.is-on small { color: var(--on-brand); }
+.pt-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); flex: 1; min-height: 0; }
+.pt-col { display: flex; flex-direction: column; gap: var(--space-3); min-height: 0; }
+.pt-col-list { display: grid; gap: var(--space-3); align-content: start; overflow: auto; }
+.pt-empty { color: var(--ink-muted); padding: var(--space-4); text-align: center; border: 1px dashed var(--line); border-radius: var(--radius-lg); }
+.pt-refund { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+.pt-order-list { display: grid; gap: var(--space-2); max-height: 520px; overflow: auto; }
+.pt-order { display: grid; gap: 4px; text-align: left; padding: var(--space-3); border-radius: var(--radius-md); border: 0; background: var(--surface-sunken); color: var(--ink); font: inherit; cursor: pointer; }
+.pt-order.is-on { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.pt-order:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.pt-order-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.pt-radio { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3); border-radius: var(--radius-md); background: var(--surface-sunken); cursor: pointer; }
+.pt-radio input { margin-top: 4px; accent-color: var(--brand); }
+.pt-radio span { display: grid; }
+.pt-radio small { color: var(--ink-muted); font-size: 13px; }
+.pt-radio.is-on { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.pt-radio.is-off { opacity: .55; cursor: not-allowed; }
+.pt-empty-panel { display: grid; place-items: center; gap: var(--space-2); color: var(--ink-muted); min-height: 240px; text-align: center; }
+.pt-empty-panel .cp-ico { color: var(--info); }
+.pt-close { display: grid; grid-template-columns: minmax(0, 1fr) 340px; align-items: start; }
+.pt-done { justify-content: flex-start; }
+
+/* login */
+.pt-login { display: grid; grid-template-columns: 400px 1fr; height: 100%; min-height: 640px; background: var(--surface); }
+.pt-login-side { background: var(--brand); color: var(--on-brand); padding: 48px; display: flex; flex-direction: column; justify-content: space-between; }
+.pt-login-brand { font: 700 22px/28px var(--font-sans); }
+.pt-login-brand span { font-weight: 400; }
+.pt-clock { font-size: 72px; line-height: 76px; font-weight: 700; }
+.pt-login-date { font: 500 16px/24px var(--font-sans); opacity: .9; text-transform: capitalize; }
+.pt-login-dev { margin-top: 24px; font: 400 14px/20px var(--font-sans); opacity: .85; }
+.pt-login-main { padding: 48px 64px; overflow: auto; }
+.pt-login-form { max-width: 600px; display: grid; gap: 28px; }
+.pt-step { display: grid; grid-template-columns: 36px 1fr; gap: 16px; }
+.pt-step-n { width: 36px; height: 36px; border-radius: 999px; background: var(--info-soft); color: var(--info); display: grid; place-items: center; font: 700 15px/1 var(--font-sans); }
+.pt-login-cta { padding-left: 52px; }
+
+/* toast */
+.pt-toast { position: fixed; left: 50%; top: calc(68px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 40; display: flex; gap: var(--space-2); align-items: center; max-width: calc(100% - 32px); padding: 12px 18px; border-radius: var(--radius-md); background: var(--brand); color: var(--on-brand); font: 500 15px/20px var(--font-sans); box-shadow: var(--shadow-2); }
+@media (prefers-reduced-motion: no-preference) { .pt-toast { animation: pt-in .18s ease-out; } @keyframes pt-in { from { opacity: 0; transform: translate(-50%, -8px); } } }
+
+/* narrow */
+@media (max-width: 1440px) {
+  .cp-top > .cp-chip:nth-child(2) { display: none; }
+  .cp-top-user { font-size: 0; gap: 0; }
+}
+@media (max-width: 1080px) {
+  .cp-pos { grid-template-columns: 1fr 340px; }
+  .pt-nav-btn { padding: 0 10px; }
+  .cp-top > .cp-chip { display: none; }
+}
+@media (max-width: 860px) {
+  .pt-app, .pt-main, .pt-pos, .pt-page { height: auto; overflow: visible; }
+  .pt-main > * { flex: none; }
+  .cp-pos { grid-template-columns: 1fr; }
+  .pt-grid { overflow: visible; max-height: none; }
+  .pt-board, .pt-refund, .pt-close, .pt-wallet, .pt-login { grid-template-columns: 1fr; }
+  .pt-login-side { padding: 24px; flex-direction: row; align-items: end; }
+  .pt-clock { font-size: 40px; line-height: 44px; }
+  .pt-login-main { padding: 24px 16px; }
+  .pt-login-cta { padding-left: 0; }
+  .pt-2col { grid-template-columns: 1fr; }
+  .cp-top { height: auto; padding-block: 8px; flex-wrap: wrap; }
+  .cp-top .cp-chip, .cp-top-user { display: none; }
+  .pt-rules { grid-template-columns: repeat(3, 1fr); }
+  .cp-cash.is-wide { grid-template-columns: 1fr; }
+  .cp-qr { grid-template-columns: 1fr; }
+  .cp-kpis { grid-template-columns: 1fr 1fr; }
+}
+.pt-receipt { width: 440px; }
+.pt-bill { background: var(--surface-sunken); border-radius: var(--radius-md); padding: 16px; display: grid; gap: 10px; font-size: 14px; }
+.pt-bill-head { display: grid; gap: 2px; text-align: center; padding-bottom: 10px; border-bottom: 1px dashed var(--line-strong); }
+.pt-bill-head b { font: 700 16px/22px var(--font-sans); }
+.pt-bill-head span { color: var(--ink-muted); font-size: 13px; }
+.pt-bill-sec { display: grid; gap: 6px; padding-bottom: 10px; border-bottom: 1px dashed var(--line-strong); }
+.pt-bill-foot { text-align: center; color: var(--ink-muted); font-size: 12px; }
+/* thẻ món có ảnh lớn: ít món mỗi hàng hơn */
+.pt-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.pt-grid .cp-item.has-media { min-height: 276px; }
+.cp-tabs { flex: none; }
+.pt-grid .cp-item-media { height: 160px; }
+.pt-grid .cp-item-name { font-size: 17px; }
+
+/* ---------- Nhập hàng ---------- */
+.pt-receive { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--space-4); align-items: start; }
+.pt-receive-side { display: grid; gap: var(--space-4); position: sticky; top: 0; }
+.pt-rc-table { display: grid; gap: 6px; }
+.pt-rc-row { display: grid; grid-template-columns: minmax(200px, 2.2fr) 0.8fr 1.2fr 1.2fr 1fr; gap: var(--space-3); align-items: center; padding: 8px 12px; border-radius: var(--radius-md); background: var(--surface-sunken); }
+.pt-rc-row.is-head { background: none; padding-block: 0; font: 500 12px/16px var(--font-sans); color: var(--ink-muted); text-transform: uppercase; letter-spacing: .04em; }
+.pt-rc-row.is-on { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.pt-rc-row > .r { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; }
+.pt-rc-item { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.pt-rc-name { display: grid; min-width: 0; }
+.pt-rc-name b { font: 700 15px/20px var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pt-rc-name small { font: 400 12px/16px var(--font-sans); color: var(--ink-muted); }
+.pt-out { color: var(--danger); } .pt-low { color: var(--warning); }
+.pt-stock { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+.pt-after { font: 700 15px/20px var(--font-sans); color: var(--success); }
+.pt-thumb { position: relative; flex: none; width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--surface-raised); color: var(--ink-muted); display: grid; place-items: center; overflow: visible; }
+.pt-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-md); }
+.pt-thumb-btn { position: absolute; right: -6px; bottom: -6px; width: 24px; height: 24px; border-radius: 99px; border: 2px solid var(--surface-sunken); background: var(--brand); color: var(--on-brand); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.pt-qty { display: inline-flex; align-items: center; background: var(--surface-raised); border-radius: var(--radius-md); }
+.pt-qty button { width: 36px; height: 40px; border: 0; background: none; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+.pt-qty button:disabled { color: var(--line-strong); cursor: default; }
+.pt-qty input { width: 48px; height: 40px; border: 0; background: none; text-align: center; font: 700 16px/1 var(--font-sans); color: var(--ink); font-variant-numeric: tabular-nums; }
+.pt-cost { display: inline-flex; align-items: center; gap: 4px; background: var(--surface-raised); border-radius: var(--radius-md); padding: 0 10px; height: 40px; }
+.pt-cost input { width: 80px; border: 0; background: none; text-align: right; font: 600 15px/1 var(--font-sans); color: var(--ink); font-variant-numeric: tabular-nums; }
+.pt-cost span { color: var(--ink-muted); }
+.pt-qty input:focus-visible, .pt-cost:focus-within { outline: 3px solid var(--focus); outline-offset: 1px; }
+.pt-rc-sum { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.pt-rc-sum li { display: flex; justify-content: space-between; gap: var(--space-3); font: 400 15px/20px var(--font-sans); }
+.pt-rc-hist { display: grid; gap: 2px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--surface-sunken); }
+.pt-newitem { width: 760px; max-height: calc(100% - 16px); overflow: auto; }
+.pt-newitem-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: var(--space-5); align-items: start; }
+.pt-2col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.pt-drop { position: relative; display: grid; place-items: center; aspect-ratio: 1; border-radius: var(--radius-lg); border: 2px dashed var(--line-strong); background: var(--surface-sunken); cursor: pointer; overflow: hidden; color: var(--ink-muted); text-align: center; }
+.pt-drop.is-over { border-color: var(--info); background: var(--info-soft); }
+.pt-drop.has-img { border-style: solid; border-color: transparent; }
+.pt-drop img { width: 100%; height: 100%; object-fit: cover; }
+.pt-drop-empty { display: grid; justify-items: center; gap: 6px; padding: var(--space-4); }
+.pt-drop-empty b { color: var(--ink); font: 600 15px/20px var(--font-sans); }
+.pt-drop-empty small { font: 400 12px/16px var(--font-sans); }
+.pt-drop-change { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; background: rgba(0,0,0,.6); color: #fff; font: 500 13px/1 var(--font-sans); }
+@media (max-width: 1100px) { .pt-receive { grid-template-columns: 1fr; } .pt-receive-side { position: static; } .pt-newitem-grid { grid-template-columns: 1fr; } .pt-drop { max-width: 240px; } }
+@media (max-width: 1440px) {
+  .pt-nav-btn, .pt-net { padding: 0 10px; gap: 5px; font-size: 13px; }
+  .pt-net { font-size: 0; gap: 0; padding: 0 10px; }
+  .cp-top .cp-chip { padding-inline: 8px; }
+}
+.pt-cat-row { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.pt-cat-row .cp-tabs { min-width: 0; flex: 0 1 auto; }
+.pt-cat-add { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: var(--radius-pill); border: 1.5px dashed var(--line-strong); background: transparent; color: var(--info); font: 500 14px/20px var(--font-sans); cursor: pointer; white-space: nowrap; }
+.pt-cat-form { flex: none; display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 14px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.pt-cat-form input { width: 200px; border: 0; background: none; font: 500 14px/20px var(--font-sans); color: var(--ink); }
+.pt-cat-form input:focus { outline: none; }
+.pt-cat-form:focus-within { box-shadow: 0 0 0 3px var(--focus); }
+
+/* ---------- Chốt ca ---------- */
+.pt-close { grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-4); }
+.pt-close-main { display: grid; gap: var(--space-4); min-width: 0; }
+.pt-close-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-4); flex-wrap: wrap; }
+.pt-close-meta { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; color: var(--ink-muted); font: 400 14px/20px var(--font-sans); }
+.pt-close-meta > span { display: inline-flex; align-items: center; gap: 6px; }
+.pt-close-meta b { color: var(--ink); }
+.pt-kpis6 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.pt-kpi-sub { display: block; margin-top: 2px; font: 400 12px/16px var(--font-sans); color: var(--ink-muted); }
+.pt-close-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.pt-close-side { position: sticky; top: 0; }
+.pt-pct { display: inline-flex; align-items: center; gap: 8px; min-width: 96px; justify-content: flex-end; }
+.pt-pct i { display: block; height: 6px; width: 48px; border-radius: 99px; background: var(--surface-sunken); position: relative; overflow: hidden; }
+.pt-pct i { background: linear-gradient(var(--info), var(--info)) no-repeat left / var(--w, 0) 100%, var(--surface-sunken); }
+.pt-hours { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding-top: 8px; }
+.pt-hour { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; }
+.pt-hour i { display: block; width: 100%; max-width: 40px; border-radius: 6px 6px 2px 2px; background: var(--brand-soft); box-shadow: inset 0 0 0 1.5px var(--info); }
+.pt-hour.is-peak i { background: var(--info); }
+.pt-hour small { font: 500 11px/14px var(--font-sans); color: var(--ink-muted); }
+.pt-hour span { font: 500 12px/16px var(--font-sans); color: var(--ink-muted); }
+.pt-top { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.pt-top li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; }
+.pt-top-rank { width: 28px; height: 28px; border-radius: 99px; background: var(--surface-sunken); display: grid; place-items: center; font: 700 13px/1 var(--font-sans); }
+.pt-top li:first-child .pt-top-rank { background: var(--accent); color: var(--on-accent); }
+.pt-top-name { display: grid; gap: 4px; min-width: 0; }
+.pt-top-name b { font: 600 15px/20px var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pt-top-bar { height: 6px; border-radius: 99px; background: var(--surface-sunken); overflow: hidden; }
+.pt-top-bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.pt-top .r { display: grid; text-align: right; }
+.pt-lowlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.pt-lowlist li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding: 8px 12px; border-radius: var(--radius-md); background: var(--surface-sunken); font: 500 14px/20px var(--font-sans); }
+.pt-denoms { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-2); }
+.pt-denom { display: grid; justify-items: center; gap: 6px; padding: 10px 8px; border-radius: var(--radius-md); background: var(--surface-sunken); }
+.pt-denom.is-on { background: var(--brand-soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.pt-denom > b { font: 700 18px/22px var(--font-sans); }
+.pt-denom .pt-qty button { width: 32px; height: 36px; }
+.pt-denom .pt-qty input { width: 44px; height: 36px; }
+.pt-count-foot { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: var(--space-3); align-items: stretch; }
+.pt-count-row { display: grid; gap: 4px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-sunken); font: 400 14px/20px var(--font-sans); color: var(--ink-muted); }
+.pt-count-row .cp-money { font: 700 20px/26px var(--font-sans); color: var(--ink); }
+.pt-check { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--surface-sunken); cursor: pointer; font: 500 14px/20px var(--font-sans); }
+.pt-check.is-on { background: var(--success-soft); }
+.pt-check input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--brand); }
+.pt-check span { display: grid; }
+.pt-check small { font: 400 12px/16px var(--font-sans); color: var(--ink-muted); }
+@media (max-width: 1180px) { .pt-close-grid, .pt-count-foot { grid-template-columns: 1fr; } .pt-kpis6 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+@media print { .cp-top, .pt-close-side, .pt-toast { display: none !important; } .pt-close { grid-template-columns: 1fr; } }
+.pt-close .cp-table th { white-space: nowrap; }
+
+/* ---------- Đăng nhập & mở ca: cột đen rộng hơn, form lớn ở giữa ---------- */
+.pt-login { grid-template-columns: minmax(440px, 42%) 1fr; }
+.pt-login-side { padding: 56px 64px; }
+.pt-login-brand { font-size: 30px; line-height: 36px; }
+.pt-login-side .pt-clock { font-size: 112px; line-height: 1; letter-spacing: -2px; }
+.pt-login-date { font-size: 20px; line-height: 28px; margin-top: 12px; }
+.pt-login-dev { font-size: 15px; }
+.pt-login-shifts { margin-top: 32px; display: grid; gap: 8px; max-width: 420px; }
+.pt-login-shifts div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); background: rgba(255,255,255,.08); font: 500 15px/20px var(--font-sans); }
+.pt-login-shifts div.is-now { background: rgba(255,255,255,.18); }
+.pt-login-shifts small { opacity: .75; font: 400 13px/20px var(--font-sans); }
+.pt-login-main { display: grid; place-items: center; padding: 40px 56px; }
+.pt-login-form { width: 100%; max-width: 760px; gap: 32px; margin: auto; }
+.pt-login-form > div:first-child .cp-h { font-size: 34px; line-height: 40px; }
+.pt-login-form > div:first-child p { font-size: 17px; }
+.pt-login .pt-step .cp-h2 { font-size: 20px; line-height: 26px; }
+.pt-login .pt-step-n { width: 36px; height: 36px; font-size: 17px; }
+.pt-login .cp-field label { font-size: 15px; }
+.pt-login .cp-field-box { min-height: 64px; padding-inline: 18px; }
+.pt-login .cp-field-box input, .pt-login .cp-field-box select { font-size: 18px; }
+.pt-login .pt-2col { gap: var(--space-4); }
+.pt-login-cta .cp-btn { min-width: 320px; min-height: 64px; font-size: 18px; }
+@media (max-width: 1100px) { .pt-login { grid-template-columns: 1fr; } .pt-login-side .pt-clock { font-size: 48px; } .pt-login-shifts { display: none; } .pt-login-cta .cp-btn { min-width: 0; width: 100%; } }
+.pt-hours-panel { align-self: start; }
+.pt-hours { height: 140px; gap: 3px; }
+.pt-hour i { max-width: none; border-radius: 3px 3px 1px 1px; }
+.pt-hour.is-zero i { background: var(--line); box-shadow: none; }
+.pt-hour small { font-size: 10px; white-space: nowrap; }
+.pt-hour span { font-size: 11px; height: 16px; }
+/* chốt ca vừa một màn hình */
+.pt-close { height: 100%; min-height: 0; }
+.pt-close-main { gap: 12px; align-content: start; }
+.pt-kpis6 { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 10px !important; }
+.pt-kpis6 .cp-kpi { padding: 10px 14px; }
+.pt-kpis6 .cp-kpi .cp-money, .pt-kpis6 .cp-kpi .cp-num { font-size: 20px; line-height: 26px; }
+.pt-close-grid { grid-template-columns: 1.25fr 1fr 1fr; gap: 12px; }
+.pt-close-grid > .cp-panel { padding: 14px 16px; gap: 10px; }
+.pt-close-grid .cp-table td, .pt-close-grid .cp-table th { padding-top: 7px; padding-bottom: 7px; }
+.pt-close .pt-hours { height: 128px; }
+.pt-top { gap: 8px; }
+.pt-close-main > .cp-panel { padding: 14px 16px; gap: 10px; }
+.pt-denoms { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 8px; }
+.pt-denom { padding: 8px 4px; gap: 4px; }
+.pt-denom > b { font-size: 16px; line-height: 20px; }
+.pt-denom .pt-qty button { width: 26px; height: 32px; }
+.pt-denom .pt-qty input { width: 34px; height: 32px; font-size: 15px; }
+.pt-denom small { font-size: 11px; }
+.pt-count-row { padding: 8px 12px; }
+.pt-count-row .cp-money { font-size: 18px; line-height: 24px; }
+.pt-close .cp-variance { padding: 8px 14px; }
+.pt-close-side { gap: 12px; overflow: auto; max-height: 100%; }
+.pt-close-side .pt-check { padding: 7px 10px; }
+.pt-side-stock { gap: 6px; }
+.pt-side-stock .pt-lowlist li { padding: 6px 10px; }
+.pt-close-side .cp-field textarea { min-height: 0; }
+@media (max-width: 1500px) { .pt-close-grid { grid-template-columns: 1fr 1fr; } .pt-close-grid > :last-child { grid-column: 1 / -1; } .pt-denoms { grid-template-columns: repeat(9, minmax(0, 1fr)); } }
+@media (max-width: 1500px) {
+  .pt-close-grid { grid-template-columns: 1.2fr 1fr 1fr; }
+  .pt-close-grid > :last-child { grid-column: auto; }
+  .pt-close { grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; }
+  .pt-kpi-sub { display: none; }
+  .pt-kpis6 .cp-kpi label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; font-size: 12px; }
+  .pt-kpis6 .cp-kpi .cp-money, .pt-kpis6 .cp-kpi .cp-num { font-size: 17px; line-height: 22px; }
+  .pt-close-grid .cp-table { font-size: 13px; }
+  .pt-close-grid .cp-table th:nth-child(4), .pt-close-grid .cp-table td:nth-child(4) { display: none; }
+  .pt-close-grid .cp-h2, .pt-close-main > .cp-panel .cp-h2 { font-size: 16px; line-height: 22px; }
+  .pt-close .pt-hours { height: 110px; }
+  .pt-top li { grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; }
+  .pt-top-rank { width: 22px; height: 22px; font-size: 11px; }
+  .pt-top-name b { font-size: 13px; line-height: 18px; }
+  .pt-top .r b { font-size: 13px; } .pt-top .r small { display: none; }
+  .pt-close-head .cp-h { font-size: 22px; line-height: 28px; }
+  .pt-close-meta { gap: 10px; font-size: 13px; }
+  .pt-close-side { padding: 14px 16px; gap: 10px; }
+  .pt-close-side .cp-h2 { font-size: 16px; }
+  .pt-close-side .cp-field-box { min-height: 44px; }
+  .pt-close-side .pt-check { font-size: 13px; padding: 6px 10px; }
+  .pt-close-side .cp-btn-lg { min-height: 52px; }
+}
+/* lấp đầy chiều cao màn hình lớn */
+.pt-main:has(.pt-close) { overflow: hidden; }
+.pt-close { height: 100%; align-items: stretch; }
+.pt-close-main { height: 100%; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+.pt-close-grid { min-height: 0; align-items: stretch; }
+.pt-close-grid > .cp-panel { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.pt-hours-panel { align-self: stretch; }
+.pt-close .pt-hours { flex: 1 1 auto; height: auto; min-height: 110px; }
+.pt-top { flex: 1; align-content: start; overflow: hidden; }
+.pt-close-side { display: flex; flex-direction: column; height: 100%; }
+.pt-side-stock { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.pt-close-side > .cp-btn { margin-top: auto; }
+@media (max-height: 820px) { .pt-top li:nth-child(n+6) { display: none; } .pt-side-stock .pt-lowlist li:nth-child(n+3) { display: none; } }
+.pt-split { margin-top: auto; display: grid; gap: 8px; padding-top: 4px; }
+.pt-split-bar { display: flex; gap: 3px; height: 14px; border-radius: 99px; overflow: hidden; background: var(--surface-sunken); }
+.pt-split-bar i { display: block; min-width: 4px; }
+.pt-split-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 400 13px/18px var(--font-sans); color: var(--ink-muted); }
+.pt-split-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.pt-split-legend i { width: 10px; height: 10px; border-radius: 3px; }
+.pt-split-legend b { color: var(--ink); }
+.pt-top-foot { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pt-top-foot span { display: grid; gap: 2px; padding: 8px 10px; border-radius: var(--radius-md); background: var(--surface-sunken); font: 400 12px/16px var(--font-sans); color: var(--ink-muted); }
+.pt-top-foot b { font: 700 16px/20px var(--font-sans); color: var(--ink); }
+.pt-side-stock { flex: 0 1 auto; }
+.pt-close-side .cp-field:has(textarea) { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 96px; }
+.pt-close-side .cp-field:has(textarea) .cp-field-box { flex: 1; align-items: stretch; }
+.pt-close-side .cp-field:has(textarea) textarea { height: 100%; resize: none; }
+.pt-close-side > .cp-btn { margin-top: 0; }
+@media (max-height: 820px) { .pt-split-legend { display: none; } .pt-top-foot { display: none; } }
+.pt-close-grid { grid-template-rows: minmax(0, 1fr); }
+@media (max-height: 820px) { .pt-split { display: none; } }
+@media (max-height: 820px) { .pt-close-side .cp-field:has(textarea) { min-height: 60px; } .pt-close-side .cp-field textarea { font-size: 14px; } }
+/* ô số liệu: 2 hàng × 3, to hơn */
+.pt-kpis6 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px !important; }
+.pt-kpis6 .cp-kpi { padding: 14px 18px; }
+.pt-kpis6 .cp-kpi label { font-size: 14px !important; }
+.pt-kpis6 .cp-kpi .cp-money, .pt-kpis6 .cp-kpi .cp-num { font-size: 26px !important; line-height: 32px !important; }
+.pt-kpis6 .pt-kpi-sub { display: block !important; font-size: 13px; }
+@media (max-height: 820px) {
+  .pt-kpis6 .cp-kpi { padding: 10px 16px; }
+  .pt-kpis6 .cp-kpi .cp-money, .pt-kpis6 .cp-kpi .cp-num { font-size: 22px !important; line-height: 28px !important; }
+  .pt-kpis6 .pt-kpi-sub { font-size: 12px; }
+}
+.pt-close, .pt-close-main, .pt-close-side { min-height: 0 !important; }
+.pt-close-main { overflow: hidden; }
+@media (max-height: 920px) {
+  .pt-kpis6 { gap: 10px !important; }
+  .pt-kpis6 .cp-kpi { padding: 8px 14px; }
+  .pt-kpis6 .cp-kpi .cp-money, .pt-kpis6 .cp-kpi .cp-num { font-size: 21px !important; line-height: 26px !important; }
+  .pt-kpis6 .pt-kpi-sub { font-size: 12px; margin-top: 0; }
+  .pt-close-head .cp-h { font-size: 20px; line-height: 26px; }
+}
+@media (max-height: 820px) {
+  .pt-kpis6 .pt-kpi-sub { display: none !important; }
+  .pt-kpis6 .cp-kpi { padding: 7px 14px; }
+  .pt-denom small { display: none; }
+  .pt-denom { padding: 6px 4px; }
+  .pt-close-grid .cp-table td, .pt-close-grid .cp-table th { padding-top: 5px; padding-bottom: 5px; }
+  .pt-close-head { gap: 8px; }
+  .pt-close-main { gap: 10px; }
+  .pt-count-row { padding: 6px 12px; }
+}
+@media (max-height: 820px) { .pt-side-stock .pt-lowlist li { padding: 4px 10px; } .pt-close-side .pt-check small { display: none; } }
+
+</style>
+<div id="root" class="cp"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+/* @ds-bundle: {"format":4,"namespace":"CanteenPOS","components":[{"name":"Button"},{"name":"StatusBadge"},{"name":"Money"},{"name":"Field"},{"name":"TopBar"},{"name":"OfflineBanner"},{"name":"CategoryTabs"},{"name":"MenuItemCard"},{"name":"OrderCart"},{"name":"BuyerCard"},{"name":"IdentifyPanel"},{"name":"CashPayment"},{"name":"QRPayment"},{"name":"PreorderTicket"},{"name":"ShiftSummary"},{"name":"NavBar"},{"name":"SectionLabel"},{"name":"ListRow"},{"name":"InlineNote"}]} */
+(function () {
+  var React = window.React, h = React.createElement, useState = React.useState;
+
+  function cx() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
+  function fmt(n) { var v = Math.round(Number(n) || 0); var s = Math.abs(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return (v < 0 ? '−' : '') + s + ' ₫'; }
+  function initials(name) { var p = String(name || '?').trim().split(/\s+/); return (p.length > 1 ? p[p.length - 2][0] + p[p.length - 1][0] : p[0].slice(0, 2)).toUpperCase(); }
+
+  /* ---------- icons (24px stroke, currentColor) ---------- */
+  var P = function (d) { return ['path', { d: d }]; };
+  var ICONS = {
+    check: [P('M5 12.5l4.5 4.5L19 7.5')],
+    alert: [P('M12 3.5l9.5 17h-19z'), P('M12 10v4.5'), P('M12 17.5v.01')],
+    clock: [['circle', { cx: 12, cy: 12, r: 9 }], P('M12 7v5l3.5 2')],
+    card: [['rect', { x: 3, y: 5.5, width: 18, height: 13, rx: 2 }], P('M3 10h18'), P('M7 15h4')],
+    qr: [P('M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z'), P('M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5zM14 20h1M20 14v1')],
+    face: [P('M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16'), P('M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 15.5c1.4 1 3.6 1 5 0')],
+    wifi: [P('M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.8 16a5 5 0 0 1 6.4 0'), P('M12 19.5v.01')],
+    wifiOff: [P('M3 3l18 18'), P('M8.8 16a5 5 0 0 1 6.4 0M5.5 12.5a9.5 9.5 0 0 1 4-2.2M14.5 10.3a9.5 9.5 0 0 1 4 2.2M2.5 9a14 14 0 0 1 3.6-2.4M10.5 5.6A14 14 0 0 1 21.5 9'), P('M12 19.5v.01')],
+    user: [['circle', { cx: 12, cy: 8, r: 4 }], P('M4.5 20.5c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5')],
+    minus: [P('M6 12h12')],
+    plus: [P('M12 6v12M6 12h12')],
+    cash: [['rect', { x: 2.5, y: 6, width: 19, height: 12, rx: 2 }], ['circle', { cx: 12, cy: 12, r: 2.75 }], P('M6 9.5v.01M18 14.5v.01')],
+    wallet: [P('M4 7.5h14.5a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5.5A1.5 1.5 0 0 1 4 18.5V6a2 2 0 0 1 2-2h10v3.5'), P('M16 14h.01')],
+    sync: [P('M19.5 10A7.8 7.8 0 0 0 5.6 7.4L4 9.5M4 4.5v5h5'), P('M4.5 14a7.8 7.8 0 0 0 13.9 2.6l1.6-2.1M20 19.5v-5h-5')],
+    ban: [['circle', { cx: 12, cy: 12, r: 9 }], P('M5.7 5.7l12.6 12.6')],
+    store: [P('M3.5 9.5L5.5 4h13l2 5.5'), P('M3.5 9.5h17V20h-17z'), P('M9.5 20v-5.5h5V20')],
+    receipt: [P('M6 3h12v18l-3-2-3 2-3-2-3 2z'), P('M9 8h6M9 12h6M9 16h3')],
+    undo: [P('M9 14L4 9l5-5'), P('M4 9h10.5a5.5 5.5 0 0 1 0 11H11')],
+    search: [['circle', { cx: 11, cy: 11, r: 6.5 }], P('M16 16l4.5 4.5')],
+    tag: [P('M3.5 12.5V4h8.5l8.5 8.5-8 8z'), P('M8 8.5v.01')],
+    users: [['circle', { cx: 9, cy: 8.5, r: 3.5 }], P('M2.5 20c.6-3.2 3.2-5 6.5-5s5.9 1.8 6.5 5'), P('M15.5 5.2a3.5 3.5 0 0 1 0 6.6M18 15.4c1.9.7 3.2 2.3 3.5 4.6')],
+    lock: [['rect', { x: 4.5, y: 10.5, width: 15, height: 10, rx: 2 }], P('M8 10.5V7.5a4 4 0 0 1 8 0v3')],
+    x: [P('M6 6l12 12M18 6L6 18')],
+    chevron: [P('M9 6l6 6-6 6')],
+    home: [P('M4 10.5L12 4l8 6.5V20h-5.5v-6h-5v6H4z')],
+    image: [['rect', { x: 3.5, y: 4.5, width: 17, height: 15, rx: 2 }], ['circle', { cx: 9, cy: 9.5, r: 1.5 }], P('M20.5 15.5l-5-5-9 9')],
+    bag: [P('M5.5 8h13l-1 12h-11z'), P('M9 8V6.5a3 3 0 0 1 6 0V8')],
+    bell: [P('M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z'), P('M10 20.5a2 2 0 0 0 4 0')],
+    chat: [P('M4 5.5h16v10H9l-4 3.5v-3.5H4z'), P('M8 10.5h.01M12 10.5h.01M16 10.5h.01')],
+    calendar: [['rect', { x: 3.5, y: 5, width: 17, height: 15, rx: 2 }], P('M3.5 9.5h17M8 3v4M16 3v4')],
+    doc: [P('M6 3h8l4 4v14H6z'), P('M14 3v4h4M9 12h6M9 16h6')],
+    back: [P('M15 5l-7 7 7 7')],
+    edit: [P('M5 19h3.5L19 8.5 15.5 5 5 15.5z'), P('M13.5 7l3.5 3.5')],
+    info: [['circle', { cx: 12, cy: 12, r: 9 }], P('M12 11v5.5M12 7.5v.01')]
+  };
+  function Icon(props) {
+    var size = props.size || 20, parts = ICONS[props.name] || [];
+    return h('svg', { className: cx('cp-ico', props.className), width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: props.stroke || 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' },
+      parts.map(function (p, i) { return h(p[0], Object.assign({ key: i }, p[1])); }));
+  }
+
+  /* ---------- Button ---------- */
+  function Button(props) {
+    var variant = props.variant || 'primary', size = props.size || 'md';
+    var rest = Object.assign({}, props); ['variant', 'size', 'block', 'icon', 'iconRight', 'children', 'className'].forEach(function (k) { delete rest[k]; });
+    return h('button', Object.assign({ type: 'button' }, rest, { className: cx('cp-btn', 'cp-btn-' + variant, size !== 'md' && 'cp-btn-' + size, props.block && 'cp-btn-block', props.className) }),
+      props.icon ? h(Icon, { name: props.icon, size: size === 'lg' ? 22 : 18 }) : null, props.children,
+      props.iconRight ? h(Icon, { name: props.iconRight, size: 18 }) : null);
+  }
+
+  /* ---------- StatusBadge ---------- */
+  var TONE_ICON = { success: 'check', warning: 'clock', danger: 'alert', info: null, neutral: null, brand: null, accent: null };
+  function StatusBadge(props) {
+    var tone = props.tone || 'neutral', icon = props.icon === undefined ? TONE_ICON[tone] : props.icon;
+    return h('span', { className: cx('cp-badge', 'cp-badge-' + tone, props.className) },
+      icon ? h(Icon, { name: icon, size: 14, stroke: 2.5 }) : h('i', { className: 'cp-dot' }), props.children);
+  }
+
+  /* ---------- Money ---------- */
+  function Money(props) {
+    var size = props.size || 'md';
+    return h('span', { className: cx('cp-money', size !== 'md' && 'cp-money-' + size, props.tone && 'cp-money-' + props.tone, props.strike && 'cp-money-strike', props.className) },
+      (props.sign && props.value > 0 ? '+' : '') + fmt(props.value));
+  }
+
+  /* ---------- Field ---------- */
+  function Field(props) {
+    var as = props.as || 'input';
+    var inner = as === 'select'
+      ? h('select', { value: props.value, defaultValue: props.defaultValue, onChange: props.onChange, id: props.id, 'aria-label': props.label }, (props.options || []).map(function (o) { return h('option', { key: o, value: o }, o); }))
+      : h(as, { type: props.type || 'text', value: props.value, defaultValue: props.defaultValue, placeholder: props.placeholder, onChange: props.onChange, id: props.id, inputMode: props.numeric ? 'numeric' : undefined, rows: as === 'textarea' ? (props.rows || 3) : undefined, 'aria-label': props.label });
+    return h('div', { className: cx('cp-field', props.error && 'is-error', props.className) },
+      props.label ? h('label', { htmlFor: props.id }, props.label) : null,
+      h('div', { className: cx('cp-field-box', props.numeric && 'is-num') }, props.icon ? h(Icon, { name: props.icon, size: 18, className: 'cp-muted' }) : null, inner, props.suffix ? h('span', { className: 'cp-field-suffix' }, props.suffix) : null),
+      props.hint || props.error ? h('div', { className: 'cp-field-hint' }, props.error || props.hint) : null);
+  }
+
+  /* ---------- TopBar ---------- */
+  function TopBar(props) {
+    var online = props.online !== false;
+    return h('header', { className: 'cp-top' },
+      h('div', { className: 'cp-top-name' }, 'Canteen ', h('b', null, 'POS')),
+      props.canteen ? h('span', { className: 'cp-chip' }, h(Icon, { name: 'store', size: 16 }), props.canteen) : null,
+      props.counter ? h('span', { className: 'cp-chip' }, h('span', null, 'Quầy'), props.counter) : null,
+      props.shift ? h('span', { className: 'cp-chip' }, h('span', null, 'Ca'), props.shift) : null,
+      h('div', { className: 'cp-top-spacer' }),
+      props.right || null,
+      online ? h(StatusBadge, { tone: 'success', icon: 'wifi' }, 'Trực tuyến') : h(StatusBadge, { tone: 'warning', icon: 'wifiOff' }, 'Offline' + (props.pending ? ' · ' + props.pending + ' chờ đồng bộ' : '')),
+      props.staff ? h('div', { className: 'cp-top-user' }, h('span', { className: 'cp-avatar' }, initials(props.staff)), props.staff) : null);
+  }
+
+  /* ---------- OfflineBanner ---------- */
+  function OfflineBanner(props) {
+    if (props.syncing) {
+      return h('div', { className: 'cp-offline is-syncing', role: 'status' }, h(Icon, { name: 'sync' }),
+        h('span', null, h('strong', null, 'Đã có mạng — đang đồng bộ '), (props.done || 0) + '/' + (props.pending || 0) + ' giao dịch'),
+        h('span', { className: 'cp-top-spacer' }), props.conflicts ? h(StatusBadge, { tone: 'danger' }, props.conflicts + ' xung đột cần xử lý') : null);
+    }
+    return h('div', { className: 'cp-offline', role: 'status' }, h(Icon, { name: 'wifiOff' }),
+      h('span', null, h('strong', null, 'Mất kết nối. '), 'Vẫn bán được: tiền mặt; ví offline ≤ ' + fmt(props.walletLimit || 30000) + '/giao dịch. QR sẽ ở trạng thái chờ xác minh.'),
+      h('span', { className: 'cp-top-spacer' }),
+      h(StatusBadge, { tone: 'warning' }, (props.pending || 0) + ' giao dịch chờ đồng bộ'),
+      props.qrPending ? h(StatusBadge, { tone: 'danger' }, props.qrPending + ' QR chưa xác minh') : null);
+  }
+
+  /* ---------- CategoryTabs ---------- */
+  function CategoryTabs(props) {
+    var st = useState(props.active || (props.items && props.items[0] && props.items[0].id));
+    var active = props.active !== undefined && props.onChange ? props.active : st[0], ref = React.useRef();
+    React.useEffect(function () { var el = ref.current && ref.current.querySelector('[aria-selected="true"]'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }, [active]);
+    return h('div', { className: 'cp-tabs', role: 'tablist', ref: ref }, (props.items || []).map(function (it) {
+      return h('button', { key: it.id, role: 'tab', className: 'cp-tab', 'aria-selected': String(it.id === active), onClick: function () { st[1](it.id); props.onChange && props.onChange(it.id); } },
+        it.label, it.count != null ? h('small', null, it.count) : null);
+    }));
+  }
+
+  /* ---------- MenuItemCard ---------- */
+  function MenuItemCard(props) {
+    var status = props.status || 'available', qty = props.qty || 0;
+    var disabled = status === 'soldout' || status === 'blocked';
+    var badge = status === 'soldout' ? h(StatusBadge, { tone: 'neutral', icon: 'ban' }, 'Hết món')
+      : status === 'blocked' ? h(StatusBadge, { tone: 'danger', icon: 'lock' }, props.blockedReason || 'Chặn với HS')
+      : status === 'low' ? h('span', { className: 'cp-item-stock' }, 'Còn ' + props.stockLeft)
+      : props.promo ? h(StatusBadge, { tone: 'accent', icon: 'tag' }, props.promo) : null;
+    return h('button', { type: 'button', className: cx('cp-item', props.image !== undefined && 'has-media', qty > 0 && 'is-selected', status === 'soldout' && 'is-soldout', status === 'blocked' && 'is-blocked'), disabled: disabled, 'aria-disabled': disabled, onClick: props.onAdd },
+      props.image !== undefined ? h('span', { className: cx('cp-item-media', !props.image && 'is-empty') },
+        props.image ? h('img', { src: props.image, alt: '', loading: 'lazy' }) : h(Icon, { name: 'image', size: 28, stroke: 1.5 })) : null,
+      props.code ? h('span', { className: 'cp-item-code' }, props.code) : null,
+      h('span', { className: 'cp-item-name' }, props.name),
+      h('span', { className: 'cp-item-foot' }, h(Money, { value: props.price }), badge),
+      qty > 0 ? h('span', { className: 'cp-item-qty', 'aria-label': 'Số lượng ' + qty }, qty) : null);
+  }
+
+  /* ---------- OrderCart ---------- */
+  function Stepper(props) {
+    return h('span', { className: 'cp-stepper' },
+      h('button', { type: 'button', 'aria-label': 'Giảm', onClick: props.onDec }, h(Icon, { name: props.value <= 1 ? 'x' : 'minus', size: 18 })),
+      h('output', null, props.value),
+      h('button', { type: 'button', 'aria-label': 'Tăng', onClick: props.onInc }, h(Icon, { name: 'plus', size: 18 })));
+  }
+  function OrderCart(props) {
+    var st = useState(props.lines || []), controlled = !!props.onQty, lines = controlled ? (props.lines || []) : st[0], setLines = st[1];
+    function bump(i, d) { if (controlled) return props.onQty(i, d); setLines(lines.map(function (l, j) { return j === i ? Object.assign({}, l, { qty: l.qty + d }) : l; }).filter(function (l) { return l.qty > 0; })); }
+    var subtotal = lines.reduce(function (s, l) { return s + l.price * l.qty; }, 0);
+    var disc = props.discount ? props.discount.amount : 0, total = Math.max(0, subtotal - disc);
+    return h('section', { className: 'cp-cart', 'aria-label': 'Giỏ hàng' },
+      h('div', { className: 'cp-cart-head' },
+        h('div', { className: 'cp-cart-title' }, h('span', null, 'Đơn ', h('span', { className: 'cp-num' }, props.orderCode || '—')), props.badge || null),
+        h('div', { className: 'cp-cart-meta' },
+          props.staff ? h('span', null, 'NV: ' + props.staff) : null,
+          props.counter ? h('span', null, 'Quầy ' + props.counter) : null,
+          props.createdAt ? h('span', null, props.createdAt) : null)),
+      lines.length ? h('div', { className: 'cp-cart-lines' }, lines.map(function (l, i) {
+        return h('div', { className: 'cp-line', key: l.name + i },
+          h('div', null, h('div', { className: 'cp-line-name' }, l.name), h('div', { className: 'cp-line-unit' }, fmt(l.price) + (l.note ? ' · ' + l.note : ''))),
+          h(Stepper, { value: l.qty, onDec: function () { bump(i, -1); }, onInc: function () { bump(i, 1); } }),
+          h('div', { className: 'cp-line-total' }, h(Money, { value: l.price * l.qty })));
+      })) : h('div', { className: 'cp-cart-lines' }, h('div', { className: 'cp-cart-empty' }, 'Chạm vào món để thêm vào đơn')),
+      h('div', { className: 'cp-cart-sum' },
+        h('div', { className: 'cp-sum-row' }, h('span', null, 'Tạm tính (' + lines.reduce(function (s, l) { return s + l.qty; }, 0) + ' món)'), h(Money, { value: subtotal })),
+        disc ? h('div', { className: 'cp-sum-row is-discount' }, h('span', null, props.discount.label), h(Money, { value: -disc })) : null,
+        h('div', { className: 'cp-sum-row is-total' }, h('span', null, 'Phải thu'), h(Money, { value: total, size: 'lg' }))),
+      props.children ? h('div', { className: 'cp-cart-foot' }, props.children) : null);
+  }
+
+  /* ---------- BuyerCard ---------- */
+  var ROLE = { student: 'Học sinh', teacher: 'Giáo viên', university: 'Sinh viên', guest: 'Khách lẻ' };
+  function BuyerCard(props) {
+    var role = props.role || 'student';
+    if (role === 'guest') {
+      return h('section', { className: 'cp-buyer' },
+        h('div', { className: 'cp-buyer-head' }, h('span', { className: 'cp-buyer-photo' }, h(Icon, { name: 'user', size: 24 })),
+          h('div', null, h('div', { className: 'cp-buyer-name' }, 'Khách lẻ'), h('div', { className: 'cp-buyer-sub' }, 'Không cần tài khoản, thẻ hay ví · thanh toán tiền mặt hoặc QR'))),
+        props.children || null);
+    }
+    var lim = props.limit, pct = lim ? Math.min(100, Math.round(lim.used / lim.max * 100)) : 0;
+    var spendable = (props.real || 0) + (props.bonus || 0);
+    return h('section', { className: 'cp-buyer', 'aria-label': 'Người mua' },
+      h('div', { className: 'cp-buyer-head' },
+        h('span', { className: 'cp-buyer-photo' }, initials(props.name)),
+        h('div', { style: { flex: 1, minWidth: 0 } },
+          h('div', { className: 'cp-buyer-name' }, props.name),
+          h('div', { className: 'cp-buyer-sub' }, [ROLE[role], props.klass, props.code].filter(Boolean).join(' · '))),
+        props.method ? h(StatusBadge, { tone: 'success', icon: props.method === 'qr' ? 'qr' : props.method === 'bio' ? 'face' : 'card' }, props.method === 'qr' ? 'QR' : props.method === 'bio' ? 'Sinh trắc' : 'Thẻ') : null),
+      h('div', { className: cx('cp-wallet', props.compact && lim && 'is-3') },
+        h('div', { className: 'cp-wallet-cell' }, h('label', null, 'Tiền thật'), h(Money, { value: props.real, tone: 'brand' })),
+        h('div', { className: 'cp-wallet-cell is-bonus' }, h('label', null, 'Tiền thưởng'), h(Money, { value: props.bonus, tone: 'accent' })),
+        props.compact && lim ? h('div', { className: 'cp-wallet-cell is-limit' }, h('label', null, 'Còn hạn mức'), h(Money, { value: Math.max(0, Math.min(spendable, lim.max - lim.used)) })) : null),
+      lim && !props.compact ? h('div', null,
+        h('div', { className: 'cp-limit-row' }, h('span', null, 'Hạn mức hôm nay'), h('span', { className: 'cp-num' }, fmt(lim.used) + ' / ' + fmt(lim.max))),
+        h('div', { className: cx('cp-meter', pct >= 100 ? 'is-over' : pct >= 80 && 'is-high'), role: 'meter', 'aria-valuenow': pct, 'aria-valuemin': 0, 'aria-valuemax': 100 }, h('i', { style: { width: pct + '%' } })),
+        h('div', { className: 'cp-limit-row', style: { marginTop: 6, marginBottom: 0 } }, h('span', null, 'Được dùng thêm'), h('strong', { className: 'cp-num', style: { color: 'var(--ink)' } }, fmt(Math.max(0, Math.min(spendable, lim.max - lim.used)))))) : null,
+      props.blocked && props.blocked.length ? h('div', { className: 'cp-blocked' }, h('span', { className: 'cp-muted' }, 'Nhóm món bị chặn:'), props.blocked.map(function (b) { return h(StatusBadge, { key: b, tone: 'danger', icon: 'lock' }, b); })) : null,
+      props.children || null);
+  }
+
+  /* ---------- IdentifyPanel ---------- */
+  var METHODS = [{ id: 'card', label: 'Quẹt thẻ', icon: 'card' }, { id: 'qr', label: 'Quét QR', icon: 'qr' }, { id: 'bio', label: 'Sinh trắc', icon: 'face' }];
+  var ID_TEXT = { idle: 'Chờ định danh người mua…', reading: 'Đang đọc — giữ thẻ/QR trước đầu đọc', found: 'Đã nhận diện người mua', error: 'Không nhận diện được — thử lại hoặc chọn cách khác' };
+  function IdentifyPanel(props) {
+    var st = useState(props.active || 'card'), state = props.state || 'idle';
+    return h('section', { className: 'cp-identify', 'aria-label': 'Định danh người mua' },
+      h('div', { className: 'cp-id-methods' }, METHODS.map(function (m) {
+        return h('button', { key: m.id, type: 'button', className: 'cp-id-method', 'aria-pressed': String(st[0] === m.id), onClick: function () { st[1](m.id); } }, h(Icon, { name: m.icon, size: 28, stroke: 1.75 }), m.label);
+      })),
+      h('div', { className: cx('cp-id-status', 'is-' + state), role: 'status' }, h(Icon, { name: state === 'found' ? 'check' : state === 'error' ? 'alert' : state === 'reading' ? 'sync' : 'clock' }), props.message || ID_TEXT[state]),
+      props.onGuest !== false ? h(Button, { variant: 'secondary', icon: 'user', block: true, onClick: props.onGuest }, 'Bán cho khách lẻ') : null);
+  }
+
+  /* ---------- CashPayment ---------- */
+  function suggest(total) {
+    var notes = [10000, 20000, 50000, 100000, 200000, 500000], out = [];
+    notes.forEach(function (n) { var v = Math.ceil(total / n) * n; if (v > total && out.indexOf(v) < 0) out.push(v); });
+    return out.sort(function (a, b) { return a - b; }).slice(0, 3);
+  }
+  function CashPayment(props) {
+    var total = props.total || 0;
+    var st = useState(props.given != null ? String(props.given) : ''), raw = st[0], setRaw = st[1];
+    var given = Number(raw || 0), change = given - total, short = given < total;
+    function key(k) { if (k === 'del') setRaw(raw.slice(0, -1)); else if (k === '000') setRaw(raw ? raw + '000' : ''); else setRaw((raw + k).replace(/^0+/, '')); }
+    var pad = props.keypad !== false ? h('div', { className: 'cp-keypad' }, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '000', '0', 'del'].map(function (k) {
+        return h('button', { key: k, type: 'button', onClick: function () { key(k); }, 'aria-label': k === 'del' ? 'Xóa' : k }, k === 'del' ? '⌫' : k);
+      })) : null;
+    var wide = props.layout === 'wide';
+    return h('section', { className: cx('cp-cash', wide && 'is-wide'), 'aria-label': 'Thanh toán tiền mặt' },
+      h('div', { className: 'cp-cash-main' },
+      h('div', { className: 'cp-due' }, h('span', { className: 'cp-h2' }, 'Phải thu'), h(Money, { value: total, size: 'xl' })),
+      h(Field, { label: 'Khách đưa', numeric: true, value: raw ? Number(raw).toLocaleString('vi-VN') : '', placeholder: '0', suffix: '₫', onChange: function (e) { setRaw(e.target.value.replace(/\D/g, '')); } }),
+      h('div', { className: 'cp-quick' },
+        h('button', { type: 'button', className: 'is-exact', onClick: function () { setRaw(String(total)); } }, 'Đủ tiền'),
+        suggest(total).map(function (v) { return h('button', { key: v, type: 'button', onClick: function () { setRaw(String(v)); } }, (v / 1000) + 'k'); })),
+      wide ? null : pad,
+      h('div', { className: cx('cp-change', short && 'is-short'), role: 'status' },
+        h('label', null, h(Icon, { name: short ? 'alert' : 'cash' }), short ? 'Còn thiếu' : 'Tiền thừa trả khách'),
+        h(Money, { value: Math.abs(change), size: 'lg' })),
+      h(Button, { size: 'lg', block: true, icon: 'check', disabled: short || !raw, onClick: function () { props.onConfirm && props.onConfirm(given); } }, 'Xác nhận đã nhận tiền'),
+      h('div', { className: 'cp-note' }, h(Icon, { name: 'receipt', size: 14 }), 'Tiền thu ghi vào ca ' + (props.shift || 'hiện tại') + (props.staff ? ' của ' + props.staff : '') + '.')),
+      wide ? pad : null);
+  }
+
+  /* ---------- QRPayment ---------- */
+  function qrCells(seed, n) {
+    var s = 0; for (var i = 0; i < seed.length; i++) s = (s * 31 + seed.charCodeAt(i)) >>> 0;
+    function rnd() { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }
+    var cells = [];
+    function finder(x, y) { for (var a = 0; a < 7; a++) for (var b = 0; b < 7; b++) { var edge = a === 0 || a === 6 || b === 0 || b === 6, core = a >= 2 && a <= 4 && b >= 2 && b <= 4; if (edge || core) cells.push([x + a, y + b]); } }
+    finder(0, 0); finder(n - 7, 0); finder(0, n - 7);
+    for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) {
+      var inF = (x < 8 && y < 8) || (x >= n - 8 && y < 8) || (x < 8 && y >= n - 8);
+      if (!inF && rnd() > 0.52) cells.push([x, y]);
+    }
+    return cells;
+  }
+  var QR_STATE = {
+    pending: { icon: 'clock', title: 'Đang chờ ngân hàng xác nhận', text: 'Không đánh dấu thành công chỉ vì khách đã quét. Trạng thái tự cập nhật khi nhận kết quả đã kiểm chứng.' },
+    success: { icon: 'check', title: 'Thanh toán thành công', text: 'Đã khớp số tiền và mã đơn với kết quả ngân hàng.' },
+    check: { icon: 'alert', title: 'Cần kiểm tra', text: 'Giao dịch không khớp đơn — chuyển sang tra soát.' },
+    offline: { icon: 'wifiOff', title: 'Chờ xác minh (offline)', text: 'Chưa kiểm chứng được giao dịch. Đơn giữ trạng thái chờ xác minh và đối soát khi có mạng.' }
+  };
+  function QRPayment(props) {
+    var state = props.state || 'pending', S = QR_STATE[state], n = 25, cell = 8, code = props.orderCode || 'DH-0000';
+    var cells = qrCells(code + (props.total || 0), n);
+    return h('section', { className: 'cp-qr', 'aria-label': 'Thanh toán QR' },
+      h('div', { className: 'cp-qr-code' }, h('svg', { width: n * cell, height: n * cell, viewBox: '0 0 ' + n + ' ' + n, role: 'img', 'aria-label': 'Mã QR thanh toán ' + fmt(props.total) + ' cho đơn ' + code, shapeRendering: 'crispEdges' },
+        cells.map(function (c, i) { return h('rect', { key: i, x: c[0], y: c[1], width: 1, height: 1 }); }))),
+      h('div', { className: 'cp-qr-info' },
+        h('div', null, h('div', { className: 'cp-muted', style: { font: '600 13px/18px var(--font-sans)' } }, 'Số tiền'), h(Money, { value: props.total, size: 'xl' })),
+        h('dl', { className: 'cp-kv' },
+          h('dt', null, 'Mã đơn'), h('dd', { className: 'cp-num' }, code),
+          h('dt', null, 'Nội dung CK'), h('dd', { className: 'cp-num' }, props.memo || ('CANTEEN ' + code)),
+          h('dt', null, 'Tài khoản nhận'), h('dd', null, props.account || 'Canteen · VietinBank'),
+          props.elapsed ? h('dt', null, 'Đã chờ') : null, props.elapsed ? h('dd', { className: 'cp-num' }, props.elapsed) : null),
+        h('div', { className: cx('cp-qr-state', 'is-' + state), role: 'status' }, h(Icon, { name: S.icon, size: 22 }),
+          h('div', null, h('strong', null, S.title), h('p', null, props.issue || S.text))),
+        props.children || null));
+  }
+
+  /* ---------- PreorderTicket ---------- */
+  var PO_STATUS = { cash: ['Chờ thu tiền mặt', 'accent', 0], new: ['Mới', 'info', 1], preparing: ['Đang chuẩn bị', 'warning', 2], ready: ['Sẵn sàng giao', 'success', 3], done: ['Đã giao', 'neutral', 4], cancelled: ['Đã hủy', 'danger', 0] };
+  function PreorderTicket(props) {
+    var s = PO_STATUS[props.status || 'new'];
+    var next = { cash: 'Đã thu ' + fmt(props.cashDue || 0), new: 'Bắt đầu chuẩn bị', preparing: 'Báo sẵn sàng', ready: 'Xác nhận đã giao' }[props.status || 'new'];
+    return h('article', { className: 'cp-ticket' },
+      h('div', { className: 'cp-ticket-head' },
+        h('span', { className: 'cp-ticket-code' }, props.code),
+        h('span', { className: 'cp-row' }, props.source === 'class' ? h(StatusBadge, { tone: 'brand', icon: 'users' }, 'Suất tập thể') : props.source === 'kiosk' ? h(StatusBadge, { tone: 'neutral', icon: 'face' }, 'Từ kiosk') : h(StatusBadge, { tone: 'neutral', icon: 'qr' }, 'Từ app'), h(StatusBadge, { tone: s[1] }, s[0]))),
+      h('div', { className: 'cp-ticket-who' }, props.buyer),
+      props.items ? h('ul', { className: 'cp-ticket-items' }, props.items.map(function (it, i) { return h('li', { key: i }, h('b', null, it.qty + '×'), it.name); })) : null,
+      h('div', { className: 'cp-ticket-time' },
+        h('span', null, 'Nhận lúc ', h('strong', null, props.pickupAt)),
+        h('span', null, 'Quầy ', h('strong', null, props.counter)),
+        props.eta ? h('span', null, 'Dự kiến ', h('strong', null, props.eta)) : null),
+      props.cashDue ? h('div', { className: 'cp-ticket-cash' }, h(Icon, { name: 'cash', size: 18 }), h('span', null, props.cashNote || 'Cần thu tiền mặt'), h(Money, { value: props.cashDue })) : null,
+      h('div', { className: 'cp-steps', 'aria-hidden': 'true' }, [1, 2, 3, 4].map(function (k) { return h('i', { key: k, className: k <= s[2] ? 'on' : '' }); })),
+      next && props.actions !== false ? h(Button, { variant: props.status === 'ready' || props.status === 'cash' ? 'primary' : 'secondary', size: 'sm', block: true, icon: props.status === 'cash' ? 'cash' : undefined, onClick: props.onNext }, next) : null);
+  }
+
+  /* ---------- ShiftSummary ---------- */
+  function ShiftSummary(props) {
+    var cashIn = props.cash || 0, cashRefund = props.cashRefund || 0, opening = props.opening || 0;
+    var expected = opening + cashIn - cashRefund;
+    var st = useState(props.counted != null ? String(props.counted) : ''), raw = st[0];
+    var counted = Number(raw || 0), diff = counted - expected;
+    var vClass = !raw ? 'is-ok' : diff === 0 ? 'is-ok' : diff > 0 ? 'is-over' : 'is-short';
+    var row = function (label, a, b, cls) { return h('tr', { className: cls }, h('td', null, label), h('td', { className: 'r cp-num' }, a), h('td', { className: 'r' }, b)); };
+    return h('section', { className: 'cp-shift', 'aria-label': 'Chốt ca' },
+      h('div', { className: 'cp-kpis' },
+        h('div', { className: 'cp-kpi' }, h('label', null, 'Số đơn'), h('span', { className: 'cp-num' }, props.orders || 0)),
+        h('div', { className: 'cp-kpi' }, h('label', null, 'Doanh thu thuần'), h(Money, { value: (props.wallet || 0) + cashIn + (props.qr || 0) - (props.refunds || 0) })),
+        h('div', { className: 'cp-kpi' }, h('label', null, 'Hoàn / hủy'), h('span', { className: 'cp-num' }, (props.refundCount || 0) + ' / ' + (props.cancelCount || 0))),
+        h('div', { className: 'cp-kpi' }, h('label', null, 'Tiền mặt phải có'), h(Money, { value: expected }))),
+      h('table', { className: 'cp-table' },
+        h('thead', null, h('tr', null, h('th', null, 'Phương thức'), h('th', { className: 'r' }, 'Số GD'), h('th', { className: 'r' }, 'Số tiền'))),
+        h('tbody', null,
+          row('Ví (tiền thật + thưởng)', props.walletCount || 0, h(Money, { value: props.wallet })),
+          row('Tiền mặt', props.cashCount || 0, h(Money, { value: cashIn })),
+          row('QR ngân hàng (đã đối soát)', props.qrCount || 0, h(Money, { value: props.qr })),
+          props.qrPending ? row('QR chờ xác minh — chưa tính', props.qrPending, h(StatusBadge, { tone: 'warning' }, 'Tra soát')) : null,
+          row('Hoàn / hủy', props.refundCount || 0, h(Money, { value: -(props.refunds || 0), tone: 'danger' })),
+          row('Tổng', '', h(Money, { value: (props.wallet || 0) + cashIn + (props.qr || 0) - (props.refunds || 0) }), 'is-total'))),
+      h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' } },
+        h(Field, { label: 'Tiền mặt thực tế trong két', numeric: true, suffix: '₫', placeholder: '0', value: raw ? Number(raw).toLocaleString('vi-VN') : '', onChange: function (e) { var v = e.target.value.replace(/\D/g, ''); st[1](v); props.onCount && props.onCount(v === '' ? null : Number(v)); }, hint: 'Đầu ca ' + fmt(opening) + ' + thu ' + fmt(cashIn) + ' − hoàn ' + fmt(cashRefund) }),
+        h('div', { className: cx('cp-variance', vClass) },
+          h('span', { style: { font: '600 15px/22px var(--font-sans)', display: 'flex', gap: 8, alignItems: 'center' } }, h(Icon, { name: vClass === 'is-ok' ? 'check' : 'alert' }), !raw ? 'Chưa nhập tiền đếm' : diff === 0 ? 'Khớp' : diff > 0 ? 'Thừa' : 'Thiếu'),
+          raw ? h(Money, { value: diff, size: 'lg', sign: true }) : null)),
+      props.children || null);
+  }
+
+
+  /* ---------- List style ---------- */
+  function NavBar(props) {
+    return h('div', { className: 'cp-nav' },
+      props.onBack !== false ? h('button', { type: 'button', 'aria-label': 'Quay lại', onClick: props.onBack }, h(Icon, { name: 'back', size: 26 })) : h('span'),
+      h('h1', null, props.title), props.right || h('span'));
+  }
+  function SectionLabel(props) {
+    return h('div', { className: 'cp-section-label' },
+      h('span', { style: { display: 'inline-flex', gap: 6, alignItems: 'center' } }, props.children, props.help ? h(Icon, { name: 'info', size: 18, className: 'cp-muted' }) : null),
+      props.onEdit ? h('button', { type: 'button', 'aria-label': 'Sửa', onClick: props.onEdit }, h(Icon, { name: 'edit', size: 20 })) : null);
+  }
+  function ListRow(props) {
+    var tag = props.onClick || props.chevron ? 'button' : 'div';
+    return h(tag, { type: tag === 'button' ? 'button' : undefined, className: 'cp-list-row', onClick: props.onClick },
+      props.icon ? h(Icon, { name: props.icon, size: 28, stroke: 1.6 }) : null,
+      h('span', { className: 'cp-list-body' },
+        h('span', { className: 'cp-list-title' }, props.title),
+        props.value != null ? h('span', { className: 'cp-list-value' }, props.value) : null,
+        props.note ? h(InlineNote, { tone: props.noteTone }, props.note) : null,
+        props.children || null),
+      props.trailing || null,
+      props.chevron ? h(Icon, { name: 'chevron', size: 22, className: 'cp-chev' }) : null);
+  }
+  function InlineNote(props) {
+    var tone = props.tone || 'warn';
+    return h('span', { className: cx('cp-inline-note', tone === 'danger' && 'is-danger', tone === 'info' && 'is-info') }, h(Icon, { name: tone === 'danger' ? 'alert' : 'info', size: 16 }), h('span', null, props.children));
+  }
+
+  var api = { Button: Button, StatusBadge: StatusBadge, Money: Money, Field: Field, TopBar: TopBar, OfflineBanner: OfflineBanner, CategoryTabs: CategoryTabs, MenuItemCard: MenuItemCard, OrderCart: OrderCart, BuyerCard: BuyerCard, IdentifyPanel: IdentifyPanel, CashPayment: CashPayment, QRPayment: QRPayment, PreorderTicket: PreorderTicket, ShiftSummary: ShiftSummary, Icon: Icon, formatVND: fmt, NavBar: NavBar, SectionLabel: SectionLabel, ListRow: ListRow, InlineNote: InlineNote };
+  window.CanteenPOS = Object.assign(window.CanteenPOS || {}, api);
+})();
+
+</script>
+<script>
+(function () {
+  var C = window.CanteenPOS, h = React.createElement, useState = React.useState, useEffect = React.useEffect, useRef = React.useRef;
+  var fmt = C.formatVND;
+
+  /* ---------------- Dữ liệu mẫu ---------------- */
+  var MENU = [
+    { code: 'C01', name: 'Cơm gà xối mỡ', price: 35000, cat: 'com', stock: 24, cost: 21000 },
+    { code: 'C02', name: 'Cơm rang dưa bò', price: 38000, cat: 'com', stock: 18, cost: 23000 },
+    { code: 'C05', name: 'Cơm sườn nướng', price: 38000, cat: 'com', stock: 0, cost: 22000 },
+    { code: 'B03', name: 'Bún bò Huế', price: 40000, cat: 'bun', promo: '−10%', promoPct: 10, stock: 15, cost: 26000 },
+    { code: 'B04', name: 'Phở gà', price: 35000, cat: 'bun', stock: 20, cost: 21000 },
+    { code: 'A07', name: 'Bánh mì trứng', price: 15000, cat: 'an', stock: 3, cost: 8000 },
+    { code: 'A09', name: 'Khoai tây chiên', price: 20000, cat: 'an', group: 'Đồ chiên rán', stock: 30, cost: 10000 },
+    { code: 'A10', name: 'Xôi xéo', price: 20000, cat: 'an', stock: 12, cost: 11000 },
+    { code: 'N01', name: 'Trà đào', price: 15000, cat: 'nuoc', stock: 40, cost: 6000 },
+    { code: 'N02', name: 'Coca-Cola lon', price: 12000, cat: 'nuoc', group: 'Nước ngọt có ga', stock: 48, cost: 7000 },
+    { code: 'N05', name: 'Sữa tươi ít đường', price: 10000, cat: 'nuoc', stock: 36, cost: 6500 },
+    { code: 'N06', name: 'Nước cam', price: 18000, cat: 'nuoc', stock: 14, cost: 9000 },
+    { code: 'T01', name: 'Sữa chua', price: 8000, cat: 'trang', stock: 50, cost: 4500 },
+    { code: 'T03', name: 'Hoa quả dầm', price: 20000, cat: 'trang', stock: 10, cost: 11000 }
+  ];
+  var SUPPLIERS = ['Bếp trung tâm', 'Đại lý nước giải khát Hải Hà', 'Lò bánh mì Thành Công', 'Sữa Mộc Châu — NPP Ba Đình', 'Khác'];
+  var GROUPS = ['Không hạn chế', 'Đồ chiên rán', 'Nước ngọt có ga', 'Đồ ngọt nhiều đường'];
+  var CATS = [{ id: 'all', label: 'Tất cả' }, { id: 'com', label: 'Cơm & món chính', prefix: 'C' }, { id: 'bun', label: 'Bún / Phở', prefix: 'B' }, { id: 'an', label: 'Ăn vặt', prefix: 'A' }, { id: 'nuoc', label: 'Đồ uống', prefix: 'N' }, { id: 'trang', label: 'Tráng miệng', prefix: 'T' }];
+  function addCat(label) {
+    var plain = label.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'D').toUpperCase().replace(/[^A-Z]/g, '');
+    var used = CATS.map(function (c) { return c.prefix; });
+    var prefix = plain.split('').filter(function (ch) { return used.indexOf(ch) < 0; })[0] || 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').filter(function (ch) { return used.indexOf(ch) < 0; })[0];
+    var c = { id: 'cat' + Date.now().toString(36), label: label, prefix: prefix };
+    CATS.push(c); return c;
+  }
+  var BUYERS = {
+    'HS-208317': { id: 'HS-208317', name: 'Trần Minh Khôi', role: 'student', klass: 'Lớp 8A3', real: 42000, bonus: 10000, limit: { used: 12000, max: 60000 }, blocked: ['Nước ngọt có ga', 'Đồ chiên rán'] },
+    'GV-0451': { id: 'GV-0451', name: 'Phạm Thu Hà', role: 'teacher', real: 315000, bonus: 20000 },
+    'SV-K20-118': { id: 'SV-K20-118', name: 'Lê Gia Bảo', role: 'university', klass: 'SV K20', real: 18000, bonus: 5000 }
+  };
+  var OFFLINE_WALLET_LIMIT = 30000;
+  var SEED_ORDERS = [
+    { id: 'DH-0401', time: '06:52', buyer: 'Khách lẻ', lines: [{ code: 'A07', name: 'Bánh mì trứng', price: 15000, qty: 2 }], total: 30000, pay: { cash: 30000 } },
+    { id: 'DH-0402', time: '07:05', buyer: 'Phạm Thu Hà · GV-0451', buyerId: 'GV-0451', lines: [{ code: 'B04', name: 'Phở gà', price: 35000, qty: 1 }, { code: 'N01', name: 'Trà đào', price: 15000, qty: 1 }], total: 50000, pay: { bonus: 10000, real: 40000 } },
+    { id: 'DH-0403', time: '07:18', buyer: 'Khách lẻ', lines: [{ code: 'C01', name: 'Cơm gà xối mỡ', price: 35000, qty: 1 }], total: 35000, pay: { qr: 35000 } },
+    { id: 'DH-0404', time: '07:31', buyer: 'Trần Minh Khôi · HS-208317', buyerId: 'HS-208317', lines: [{ code: 'A10', name: 'Xôi xéo', price: 20000, qty: 1 }], total: 20000, pay: { real: 20000 } }
+  ];
+  var SEED_PRE = [
+    { code: 'K-0151', source: 'kiosk', buyer: 'Lê Gia Bảo · SV K20 · ví thiếu', status: 'cash', pickupAt: '11:20', counter: '2', cashDue: 12000, cashNote: 'Ví thiếu — thu thêm tiền mặt', items: [{ qty: 1, name: 'Bún bò Huế' }, { qty: 1, name: 'Trà đào' }] },
+    { code: 'APP-1190', source: 'app', buyer: 'Đặng Thu Trang · 11B3', status: 'cash', pickupAt: '11:35', counter: '2', cashDue: 53000, cashNote: 'Chọn trả tiền mặt khi nhận', items: [{ qty: 1, name: 'Cơm rang dưa bò' }, { qty: 1, name: 'Nước cam' }] },
+    { code: 'APP-1191', source: 'app', buyer: 'Vũ Minh Anh · 9A2', status: 'new', pickupAt: '11:45', counter: '2', eta: '11:45', items: [{ qty: 1, name: 'Phở gà' }, { qty: 1, name: 'Trà đào' }] },
+    { code: 'APP-1187', source: 'app', uni: true, buyer: 'Lê Gia Bảo · SV K20', status: 'new', pickupAt: '11:30', counter: '2', items: [{ qty: 1, name: 'Cơm sườn nướng' }, { qty: 1, name: 'Nước cam' }] },
+    { code: 'LOP-10A2', source: 'class', buyer: 'Lớp 10A2 — GVCN Đỗ Thảo', status: 'preparing', pickupAt: '11:00', counter: '3', items: [{ qty: 38, name: 'Suất trưa tiêu chuẩn' }, { qty: 2, name: 'Suất chay' }] },
+    { code: 'APP-1183', source: 'app', uni: true, buyer: 'Nguyễn Hải Yến · SV K19', status: 'preparing', pickupAt: '11:15', counter: '1', items: [{ qty: 2, name: 'Bún chả' }] },
+    { code: 'APP-1176', source: 'app', buyer: 'Hoàng Đức · 12C1', status: 'ready', pickupAt: '10:50', counter: '2', items: [{ qty: 1, name: 'Cơm gà xối mỡ' }] }
+  ];
+  var BACKLOG = 37; // đơn đang chờ ở các quầy khác (mô phỏng tải)
+
+  function now() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+  function addMin(hhmm, m) { var p = hhmm.split(':'), t = (+p[0]) * 60 + (+p[1]) + m; return ('0' + Math.floor(t / 60) % 24).slice(-2) + ':' + ('0' + t % 60).slice(-2); }
+  function etaAdd(n) { return n <= 30 ? 20 : n < 50 ? 30 : 35; }
+  function lineTotal(lines) { return lines.reduce(function (s, l) { return s + l.price * l.qty; }, 0); }
+  function promoOf(lines) { return lines.reduce(function (s, l) { var m = MENU.filter(function (x) { return x.code === l.code; })[0]; return s + (m && m.promoPct ? Math.round(l.price * l.qty * m.promoPct / 100) : 0); }, 0); }
+  function payLabel(p) {
+    var parts = [];
+    if (p.bonus) parts.push('thưởng ' + fmt(p.bonus)); if (p.real) parts.push('ví ' + fmt(p.real));
+    if (p.cash) parts.push('tiền mặt ' + fmt(p.cash)); if (p.qr) parts.push('QR ' + fmt(p.qr)); if (p.qrPending) parts.push('QR chờ xác minh ' + fmt(p.qrPending));
+    return parts.join(' · ');
+  }
+
+  /* ---------------- Toast ---------------- */
+  function Toast(props) {
+    if (!props.toast) return null;
+    return h('div', { className: 'pt-toast', role: 'status' }, h(C.Icon, { name: props.toast.icon || 'check' }), props.toast.text);
+  }
+
+  /* ---------------- Đăng nhập & mở ca ---------------- */
+  function Login(props) {
+    var s1 = useState('NV0123'), s2 = useState('123456'), s3 = useState('Quầy 2 — Cơm & món chính'), s4 = useState('Ca sáng 06:30–10:30'), s5 = useState('1000000'), s6 = useState('Canteen A — Nhà ăn chính');
+    var err = s2[0].length < 4 ? 'PIN tối thiểu 4 số' : null;
+    function step(n, title, body) {
+      return h('div', { className: 'pt-step' }, h('span', { className: 'pt-step-n' }, n), h('div', { className: 'cp-stack' }, h('div', { className: 'cp-h2' }, title), body));
+    }
+    function submit(e) {
+      e.preventDefault(); if (err) return;
+      props.onOpen({ staff: 'Nguyễn Thị Lan', staffId: s1[0], canteen: s6[0], counter: s3[0].split(' — ')[0].replace('Quầy ', ''), counterName: s3[0], shift: s4[0].replace('Ca ', '').replace(/^s/, 'S').replace(/^t/, 'T').replace(/^c/, 'C'), opening: Number(s5[0] || 0), openedAt: now() });
+    }
+    return h('div', { className: 'pt-login' },
+      h('aside', { className: 'pt-login-side' },
+        h('div', { className: 'pt-login-brand' }, 'Canteen ', h('span', null, 'POS')),
+        h('div', null,
+          h('div', { className: 'pt-clock cp-num' }, now()),
+          h('div', { className: 'pt-login-date' }, new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })),
+          h('div', { className: 'pt-login-dev' }, 'Thiết bị: POS-A-02 · Bản dùng thử, dữ liệu mẫu'),
+          h('div', { className: 'pt-login-shifts', 'aria-label': 'Lịch ca hôm nay' }, [['Ca sáng', '06:30–10:30', 'NV Lan · Quầy 2'], ['Ca trưa', '10:30–14:00', 'NV Tùng · Quầy 2'], ['Ca chiều', '14:00–18:00', 'NV Mai · Quầy 1']].map(function (c) {
+            return h('div', { key: c[0], className: s4[0].indexOf(c[0].toLowerCase().replace('ca ', '')) >= 0 ? 'is-now' : '' }, h('span', null, c[0] + ' · ' + c[1]), h('small', null, c[2]));
+          })))),
+      h('form', { className: 'pt-login-main', onSubmit: submit },
+        h('div', { className: 'pt-login-form' },
+          h('div', null, h('h1', { className: 'cp-h' }, 'Đăng nhập & mở ca'), h('p', { className: 'cp-muted', style: { margin: '4px 0 0' } }, 'Dùng tài khoản nhân viên được Canteen cấp.')),
+          step(1, 'Tài khoản nhân viên', h('div', { className: 'pt-2col' },
+            h(C.Field, { id: 'f-staff', label: 'Mã nhân viên', icon: 'user', value: s1[0], onChange: function (e) { s1[1](e.target.value); } }),
+            h(C.Field, { id: 'f-pin', label: 'Mật khẩu / PIN', icon: 'lock', type: 'password', value: s2[0], error: err, onChange: function (e) { s2[1](e.target.value); } }))),
+          step(2, 'Canteen & quầy bán', h('div', { className: 'pt-2col' },
+            h(C.Field, { id: 'f-canteen', label: 'Canteen', as: 'select', value: s6[0], onChange: function (e) { s6[1](e.target.value); }, options: ['Canteen A — Nhà ăn chính', 'Canteen B — Khu ký túc'] }),
+            h(C.Field, { id: 'f-counter', label: 'Quầy', as: 'select', value: s3[0], onChange: function (e) { s3[1](e.target.value); }, options: ['Quầy 2 — Cơm & món chính', 'Quầy 1 — Đồ uống', 'Quầy 3 — Suất tập thể'] }))),
+          step(3, 'Mở ca', h('div', { className: 'cp-stack' },
+            h('div', { className: 'pt-2col', style: { alignItems: 'start' } },
+              h(C.Field, { id: 'f-shift', label: 'Ca làm việc', as: 'select', value: s4[0], onChange: function (e) { s4[1](e.target.value); }, options: ['Ca sáng 06:30–10:30', 'Ca trưa 10:30–14:00', 'Ca chiều 14:00–18:00'] }),
+              h(C.Field, { id: 'f-open', label: 'Tiền mặt đầu ca', numeric: true, suffix: '₫', value: s5[0] ? Number(s5[0]).toLocaleString('vi-VN') : '', onChange: function (e) { s5[1](e.target.value.replace(/\D/g, '')); }, hint: 'Đếm két và nhập đúng số thực tế' })),
+            h(C.InlineNote, { tone: 'info' }, 'Hệ thống ghi nhận ' + s1[0] + ' · ' + s3[0].split(' — ')[0] + ' · ' + now() + ' làm mốc mở ca.'))),
+          h('div', { className: 'pt-login-cta' }, h(C.Button, { type: 'submit', size: 'lg', icon: 'check' }, 'Mở ca và bắt đầu bán')))));
+  }
+
+  /* ---------------- Màn bán hàng ---------------- */
+  function Sell(props) {
+    var app = props.app, cart = app.cart, buyer = app.buyer;
+    var cat = useState('all'), q = useState('');
+    var student = buyer && buyer.role === 'student';
+    var items = MENU.filter(function (m) { return (cat[0] === 'all' || m.cat === cat[0]) && (!q[0] || (m.name + ' ' + m.code).toLowerCase().indexOf(q[0].toLowerCase()) >= 0); });
+    var qty = {}; cart.forEach(function (l) { qty[l.code] = l.qty; });
+    var sub = lineTotal(cart), promo = promoOf(cart), total = sub - promo;
+    var cats = CATS.map(function (c) { return { id: c.id, label: c.label, count: c.id === 'all' ? MENU.length : MENU.filter(function (m) { return m.cat === c.id; }).length }; });
+    var idState = useState('idle');
+
+    function identify(id) {
+      idState[1]('reading');
+      setTimeout(function () { idState[1]('idle'); props.setBuyer(Object.assign({ method: id.indexOf('GV') === 0 ? 'qr' : id.indexOf('SV') === 0 ? 'bio' : 'card' }, BUYERS[id])); }, 600);
+    }
+    var buyerBlock;
+    if (buyer === null) {
+      buyerBlock = h('div', { className: 'cp-panel cp-stack' },
+        h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } }, h('span', { className: 'cp-h2' }, 'Định danh người mua'), h(C.Button, { variant: 'ghost', size: 'sm', onClick: function () { props.setBuyer('guest'); } }, 'Hủy')),
+        h(C.IdentifyPanel, { state: idState[0], onGuest: function () { props.setBuyer('guest'); } }),
+        h('div', { className: 'pt-demo' }, h('div', { className: 'pt-demo-label' }, 'Mô phỏng đầu đọc'),
+          h('div', { className: 'cp-row' },
+            h(C.Button, { size: 'sm', variant: 'secondary', icon: 'card', onClick: function () { identify('HS-208317'); } }, 'Thẻ HS Khôi'),
+            h(C.Button, { size: 'sm', variant: 'secondary', icon: 'qr', onClick: function () { identify('GV-0451'); } }, 'QR GV Hà'),
+            h(C.Button, { size: 'sm', variant: 'secondary', icon: 'face', onClick: function () { identify('SV-K20-118'); } }, 'Sinh trắc SV Bảo'))));
+    } else if (buyer === 'guest') {
+      buyerBlock = h(C.BuyerCard, { role: 'guest' });
+    } else {
+      var limLeft = buyer.limit ? buyer.limit.max - buyer.limit.used : Infinity;
+      buyerBlock = h(C.BuyerCard, Object.assign({ compact: true }, buyer, { code: buyer.id }),
+        h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } },
+          buyer.limit && total > limLeft ? h(C.InlineNote, { tone: 'danger' }, 'Đơn vượt hạn mức hôm nay') : h('span'),
+          h(C.Button, { variant: 'ghost', size: 'sm', icon: 'x', onClick: function () { props.setBuyer('guest'); } }, 'Bỏ người mua')));
+    }
+
+    var canWallet = buyer && buyer !== 'guest' && cart.length;
+    return h('div', { className: 'cp-pos pt-pos' },
+      h('div', { className: 'cp-pos-main' },
+        h('div', { className: 'cp-search' },
+          h(C.Field, { id: 'f-search', icon: 'search', placeholder: 'Tìm món theo tên hoặc mã (VD: C01)', value: q[0], onChange: function (e) { q[1](e.target.value); } })),
+        h(C.CategoryTabs, { items: cats, active: cat[0], onChange: cat[1] }),
+        h('div', { className: 'cp-menu-grid pt-grid' }, items.map(function (m) {
+          var left = m.stock != null ? m.stock - (qty[m.code] || 0) : null;
+          var st = m.status === 'soldout' || left <= 0 ? 'soldout' : student && m.group && buyer.blocked.indexOf(m.group) >= 0 ? 'blocked' : left != null && left <= 5 ? 'low' : 'available';
+          return h(C.MenuItemCard, { key: m.code, image: m.image || null, code: m.code, name: m.name, price: m.price, promo: m.promo, status: st, stockLeft: left, qty: qty[m.code] || 0, blockedReason: 'Chặn với HS', onAdd: function () { props.add(m); } });
+        }), items.length ? null : h('div', { className: 'cp-muted' }, 'Không tìm thấy món phù hợp.'))),
+      h('div', { className: 'cp-pos-side' },
+        buyerBlock,
+        h(C.OrderCart, {
+          orderCode: app.offline ? 'OFF-' + String(app.offSeq).padStart(4, '0') : 'DH-' + String(app.seq).padStart(4, '0'),
+          staff: app.shift.staff.split(' ').pop(), counter: app.shift.counter, createdAt: now() + ' · ' + new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
+          lines: cart, onQty: props.qty, discount: promo ? { label: 'KM bún bò −10%', amount: promo } : null,
+          badge: app.offline ? h(C.StatusBadge, { tone: 'warning', icon: 'wifiOff' }, 'Offline') : cart.length ? h(C.Button, { variant: 'ghost', size: 'sm', onClick: props.clear }, 'Xóa đơn') : null
+        },
+          canWallet ? h(C.Button, { size: 'lg', block: true, icon: 'wallet', onClick: function () { props.pay('wallet'); } }, app.offline ? 'Trừ ví offline (≤ ' + fmt(OFFLINE_WALLET_LIMIT) + ')' : 'Thanh toán bằng ví') : null,
+          h('div', { className: 'pt-2col' },
+            h(C.Button, { variant: canWallet ? 'secondary' : 'primary', icon: 'cash', size: canWallet ? 'md' : 'lg', disabled: !cart.length, onClick: function () { props.pay('cash'); } }, 'Tiền mặt'),
+            h(C.Button, { variant: 'secondary', icon: 'qr', size: canWallet ? 'md' : 'lg', disabled: !cart.length, onClick: function () { props.pay('qr'); } }, app.offline ? 'QR (chờ xác minh)' : 'QR')))));
+  }
+
+  /* ---------------- Hộp thoại thanh toán ---------------- */
+  function PayDialog(props) {
+    var app = props.app, mode = props.mode, total = props.total, buyer = app.buyer, orderCode = props.orderCode;
+    var qrState = useState(app.offline ? 'offline' : 'pending'), issue = useState(null), elapsed = useState(0);
+    var supp = useState('cash');
+    useEffect(function () { if (mode !== 'qr' && !(mode === 'wallet')) return; var t = setInterval(function () { elapsed[1](function (x) { return x + 1; }); }, 1000); return function () { clearInterval(t); }; }, []);
+    var mmss = '00:' + ('0' + (elapsed[0] % 60)).slice(-2);
+    var title, body, foot = null;
+
+    if (mode === 'cash') {
+      title = 'Thanh toán tiền mặt' + (buyer && buyer !== 'guest' ? ' — ' + buyer.name : ' — khách lẻ');
+      body = h(C.CashPayment, { layout: 'wide', total: total, shift: app.shift.shift, staff: 'NV ' + app.shift.staff.split(' ').pop(), onConfirm: function (given) { props.done({ cash: total }, 'Đã nhận ' + fmt(given) + ' · trả lại ' + fmt(given - total)); } });
+    } else if (mode === 'qr') {
+      title = 'Thanh toán QR ngân hàng';
+      var st = qrState[0];
+      body = h('div', { className: 'cp-stack', style: { gap: 20 } },
+        h(C.QRPayment, { total: total, orderCode: orderCode, state: st, elapsed: st === 'pending' ? mmss : null, issue: issue[0] },
+          st === 'success' ? h(C.Button, { size: 'lg', icon: 'check', onClick: function () { props.done({ qr: total }, 'QR đã kiểm chứng · ' + fmt(total)); } }, 'Hoàn tất đơn')
+          : st === 'offline' ? h(C.Button, { size: 'lg', icon: 'clock', onClick: function () { props.done({ qrPending: total }, 'Đã lưu đơn — QR chờ xác minh khi có mạng', 'clock'); } }, 'Lưu đơn, chờ xác minh')
+          : st === 'check' ? h('div', { className: 'cp-row' }, h(C.Button, { variant: 'secondary', icon: 'receipt', onClick: function () { props.flag(orderCode, total, issue[0]); } }, 'Chuyển tra soát & đóng'), h(C.Button, { variant: 'ghost', icon: 'undo', onClick: function () { qrState[1]('pending'); issue[1](null); elapsed[1](0); } }, 'Tạo lại QR'))
+          : h(C.InlineNote, null, 'Khách quét xong vẫn phải chờ ngân hàng báo về — không có nút "đánh dấu đã trả".')),
+        st === 'pending' ? h('div', { className: 'pt-demo' }, h('div', { className: 'pt-demo-label' }, 'Mô phỏng phản hồi từ ngân hàng'),
+          h('div', { className: 'cp-row' },
+            h(C.Button, { size: 'sm', variant: 'secondary', icon: 'check', onClick: function () { qrState[1]('success'); } }, 'Khớp số tiền & mã đơn'),
+            h(C.Button, { size: 'sm', variant: 'secondary', icon: 'alert', onClick: function () { issue[1]('Nhận ' + fmt(total - 5000) + ' — lệch 5.000 ₫ so với đơn. Không xác nhận; chuyển tra soát.'); qrState[1]('check'); } }, 'Sai số tiền'),
+            h(C.Button, { size: 'sm', variant: 'secondary', icon: 'alert', onClick: function () { issue[1]('Giao dịch trùng với mã đơn đã thanh toán trước đó. Không ghi nhận lần hai.'); qrState[1]('check'); } }, 'Giao dịch trùng'),
+            h(C.Button, { size: 'sm', variant: 'secondary', icon: 'alert', onClick: function () { issue[1]('Có tiền về ' + fmt(total) + ' nhưng nội dung CK không chứa mã ' + orderCode + '.'); qrState[1]('check'); } }, 'Chưa khớp đơn'))) : null);
+    } else {
+      // ví
+      var bonusUse = Math.min(buyer.bonus, total), realUse = Math.min(buyer.real, total - bonusUse), short = total - bonusUse - realUse;
+      var limLeft = buyer.limit ? buyer.limit.max - buyer.limit.used : Infinity;
+      var walletUse = bonusUse + realUse, overLimit = buyer.limit && walletUse > limLeft;
+      if (overLimit) { var cap = limLeft; bonusUse = Math.min(buyer.bonus, cap); realUse = Math.min(buyer.real, cap - bonusUse); short = total - bonusUse - realUse; walletUse = bonusUse + realUse; }
+      var offCap = app.offline && walletUse > OFFLINE_WALLET_LIMIT;
+      if (offCap) { bonusUse = Math.min(buyer.bonus, OFFLINE_WALLET_LIMIT); realUse = Math.min(buyer.real, OFFLINE_WALLET_LIMIT - bonusUse); short = total - bonusUse - realUse; }
+      var blockedHit = buyer.role === 'student' && app.cart.some(function (l) { var m = MENU.filter(function (x) { return x.code === l.code; })[0]; return m.group && buyer.blocked.indexOf(m.group) >= 0; });
+      title = 'Thanh toán bằng ví';
+      var row = function (label, v, tone, sub) { return h('div', { className: 'pt-split-row' }, h('span', null, label, sub ? h('small', null, sub) : null), h(C.Money, { value: v, tone: tone })); };
+      body = h('div', { className: 'pt-wallet' },
+        h(C.BuyerCard, Object.assign({}, buyer, { code: buyer.id })),
+        h('div', { className: 'cp-stack' },
+          h('div', { className: 'cp-due' }, h('span', { className: 'cp-h2' }, 'Phải thu'), h(C.Money, { value: total, size: 'lg' })),
+          blockedHit ? h(C.StatusBadge, { tone: 'danger' }, 'Đơn có món bị chặn') : h(C.StatusBadge, { tone: overLimit ? 'warning' : 'success' }, overLimit ? 'Chạm hạn mức — chỉ trừ ví ' + fmt(limLeft) : 'Không có món bị chặn' + (buyer.limit ? ' · trong hạn mức' : '')),
+          offCap ? h(C.InlineNote, null, 'Offline: ví chỉ trừ tối đa ' + fmt(OFFLINE_WALLET_LIMIT) + ' mỗi giao dịch') : null,
+          h('div', null,
+            row('Trừ tiền thưởng', -bonusUse, 'accent', 'Ưu tiên dùng trước theo chính sách Canteen'),
+            row('Trừ tiền thật', -realUse, null, 'Còn lại ' + fmt(buyer.real - realUse))),
+          short > 0 ? h('div', { className: 'cp-change is-short' }, h('label', null, h(C.Icon, { name: 'alert' }), 'Còn thiếu — thu bổ sung'), h(C.Money, { value: short, size: 'lg' })) : null,
+          short > 0 ? h('div', { className: 'pt-2col' },
+            h(C.Button, { variant: 'secondary', icon: 'cash', className: supp[0] === 'cash' ? 'pt-on' : '', onClick: function () { supp[1]('cash'); } }, 'Bổ sung tiền mặt'),
+            h(C.Button, { variant: 'secondary', icon: 'qr', className: supp[0] === 'qr' ? 'pt-on' : '', onClick: function () { supp[1]('qr'); } }, app.offline ? 'Bổ sung QR (chờ XM)' : 'Bổ sung QR')) : null));
+      var pay = { bonus: bonusUse, real: realUse };
+      if (short > 0) { if (supp[0] === 'cash') pay.cash = short; else if (app.offline) pay.qrPending = short; else pay.qr = short; }
+      foot = h('div', { className: 'pt-dialog-foot' },
+        h('div', { className: 'cp-note' }, h(C.Icon, { name: 'receipt', size: 14 }), 'Biên lai tách: ' + payLabel(pay)),
+        h(C.Button, { size: 'lg', icon: 'check', disabled: blockedHit, onClick: function () { props.done(pay, 'Đã trừ ví ' + fmt(bonusUse + realUse) + (short > 0 ? ' · thu thêm ' + fmt(short) : '')); } },
+          short > 0 ? 'Trừ ví & thu ' + fmt(short) + (supp[0] === 'cash' ? ' tiền mặt' : ' qua QR') : 'Trừ ví ' + fmt(total)));
+      if (short > 0 && supp[0] === 'qr' && !app.offline) {
+        foot = h('div', { className: 'pt-dialog-foot' }, h(C.InlineNote, { tone: 'info' }, 'Phần thiếu sẽ thu qua QR: trừ ví trước, đơn hoàn tất khi QR được kiểm chứng.'),
+          h(C.Button, { size: 'lg', icon: 'qr', onClick: function () { props.walletThenQr({ bonus: bonusUse, real: realUse }, short); } }, 'Trừ ví & tạo QR ' + fmt(short)));
+      }
+    }
+    return h('div', { className: 'cp-scrim pt-scrim', onClick: function (e) { if (e.target === e.currentTarget) props.close(); } },
+      h('div', { className: 'cp-dialog pt-dialog', role: 'dialog', 'aria-modal': 'true', 'aria-label': title },
+        h('div', { className: 'cp-dialog-head' }, h('h2', { className: 'cp-h' }, title), h(C.Button, { variant: 'ghost', icon: 'x', 'aria-label': 'Đóng', onClick: props.close })),
+        body, foot));
+  }
+
+  /* ---------------- Đơn hàng (đặt trước / kiosk / suất lớp) ---------------- */
+  function Preorders(props) {
+    var list = props.list, filter = useState('all');
+    var waiting = BACKLOG + list.filter(function (t) { return t.status === 'new' || t.status === 'preparing'; }).length;
+    var add = etaAdd(waiting);
+    var shown = list.filter(function (t) { return filter[0] === 'all' || t.source === filter[0]; });
+    function col(title, st, tone) {
+      var l = shown.filter(function (t) { return t.status === st; });
+      return h('div', { className: 'pt-col' },
+        h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } }, h('span', { className: 'cp-h2' }, title), h(C.StatusBadge, { tone: tone }, l.length + ' đơn')),
+        h('div', { className: 'pt-col-list' }, l.length ? l.map(function (t) {
+          return h(C.PreorderTicket, Object.assign({ key: t.code }, t, { eta: t.uni && st !== 'ready' ? '+' + add + '′ → ' + addMin(t.pickupAt, add) : t.eta, onNext: function () { props.next(t.code); } }));
+        }) : h('div', { className: 'pt-empty' }, 'Không có đơn')));
+    }
+    function rule(range, v) { return h('div', { className: 'pt-rule' + (v === add ? ' is-on' : '') }, h('small', null, range), h('b', { className: 'cp-num' }, '+' + v + '′')); }
+    return h('div', { className: 'pt-page' },
+      h('div', { className: 'cp-panel pt-pre-head' },
+        h('div', { style: { flex: 1, minWidth: 240 } },
+          h('h1', { className: 'cp-h' }, 'Đơn hàng'),
+          h('div', { className: 'cp-muted' }, 'Đang chờ toàn Canteen: ', h('strong', { className: 'cp-num', style: { color: 'var(--ink)' } }, waiting + ' đơn'), ' · cộng thêm cho sinh viên (cấp Đại học)')),
+        h('div', { className: 'pt-rules' }, rule('≤ 30 đơn', 20), rule('30 – 50 đơn', 30), rule('≥ 50 đơn', 35)),
+        h(C.CategoryTabs, { items: [{ id: 'all', label: 'Tất cả', count: list.length }, { id: 'app', label: 'Từ app', count: list.filter(function (t) { return t.source === 'app'; }).length }, { id: 'kiosk', label: 'Từ kiosk', count: list.filter(function (t) { return t.source === 'kiosk'; }).length }, { id: 'class', label: 'Suất tập thể', count: list.filter(function (t) { return t.source === 'class'; }).length }], active: filter[0], onChange: filter[1] })),
+      h('div', { className: 'pt-board' }, col('Cần thanh toán tiền mặt', 'cash', 'accent'), col('Mới nhận', 'new', 'info'), col('Đang chuẩn bị', 'preparing', 'warning'), col('Sẵn sàng giao', 'ready', 'success')),
+      h('div', { className: 'pt-demo', style: { alignSelf: 'start' } }, h('div', { className: 'pt-demo-label' }, 'Mô phỏng'),
+        h('div', { className: 'cp-row' },
+          h(C.Button, { size: 'sm', variant: 'secondary', icon: 'plus', onClick: props.incoming }, 'Đơn mới từ app'),
+          h(C.Button, { size: 'sm', variant: 'secondary', icon: 'cash', onClick: props.incomingCash }, 'Đơn kiosk thiếu tiền ví'),
+          h(C.Button, { size: 'sm', variant: 'secondary', icon: 'users', onClick: props.incomingClass }, 'Suất tập thể lớp mới'))));
+  }
+
+  /* ---------------- Hoàn / hủy ---------------- */
+  function Refund(props) {
+    var orders = props.orders;
+    var q = useState(''), sel = useState(null), picks = useState({}), reason = useState(''), method = useState('wallet'), note = useState('');
+    var found = orders.filter(function (o) { return !q[0] || (o.id + ' ' + o.buyer).toLowerCase().indexOf(q[0].toLowerCase()) >= 0; });
+    var o = orders.filter(function (x) { return x.id === sel[0]; })[0];
+    var amount = o ? o.lines.reduce(function (s, l, i) { return s + (picks[0][i] ? l.price * l.qty : 0); }, 0) : 0;
+    if (o && amount > o.total) amount = o.total;
+    var hasWallet = o && (o.pay.bonus || o.pay.real);
+    var needApprove = amount > 50000;
+    var bonusPart = o && hasWallet ? Math.round(amount * (o.pay.bonus || 0) / o.total) : 0;
+    // mở tab: tự mở đơn hoàn thành mới nhất
+    useEffect(function () { if (!sel[0] && orders.length) pick(orders[orders.length - 1].id); }, []);
+    function pick(id) { sel[1](id); var p = {}; var ord = orders.filter(function (x) { return x.id === id; })[0]; ord.lines.forEach(function (_, i) { p[i] = true; }); picks[1](p); method[1]((ord.pay.bonus || ord.pay.real) ? 'wallet' : ord.pay.cash ? 'cash' : 'bank'); reason[1](''); }
+    function radio(id, label, sub, disabled) {
+      return h('label', { className: 'pt-radio' + (method[0] === id ? ' is-on' : '') + (disabled ? ' is-off' : '') },
+        h('input', { type: 'radio', name: 'rf-method', id: 'rf-' + id, checked: method[0] === id, disabled: disabled, onChange: function () { method[1](id); } }),
+        h('span', null, h('strong', null, label), h('small', null, sub)));
+    }
+    return h('div', { className: 'pt-page pt-refund' },
+      h('div', { className: 'cp-panel cp-stack' },
+        h('h1', { className: 'cp-h' }, 'Đơn đã hoàn thành'),
+        h('div', { className: 'cp-muted' }, orders.length + ' đơn trong ca · mới nhất ở trên · chọn đơn để xem chi tiết, hoàn hoặc hủy'),
+        h(C.Field, { id: 'rf-q', icon: 'search', placeholder: 'Mã đơn hoặc tên người mua', value: q[0], onChange: function (e) { q[1](e.target.value); }, hint: 'Phạm vi quyền: ' + props.shift.canteen.split(' — ')[0] + ' · ca hiện tại · Quầy 1–3' }),
+        h('div', { className: 'pt-order-list' }, found.length ? found.slice().reverse().map(function (x) {
+          return h('button', { key: x.id, type: 'button', className: 'pt-order' + (x.id === sel[0] ? ' is-on' : ''), onClick: function () { pick(x.id); } },
+            h('span', { className: 'pt-order-top' }, h('span', { className: 'cp-num', style: { fontWeight: 700 } }, x.id), x.refunded ? h(C.StatusBadge, { tone: 'neutral' }, 'Đã hoàn') : x.flag ? h(C.StatusBadge, { tone: 'danger' }, 'Tra soát') : x.pay.qrPending ? h(C.StatusBadge, { tone: 'warning' }, 'Chờ xác minh') : h(C.StatusBadge, { tone: 'success' }, 'Đã thanh toán')),
+            h('span', { className: 'cp-muted' }, x.time + ' · ' + x.buyer),
+            h('span', { className: 'pt-order-top' }, h('span', { className: 'cp-muted', style: { fontSize: 13 } }, payLabel(x.pay)), h(C.Money, { value: x.total })));
+        }) : h('div', { className: 'pt-empty' }, 'Không có đơn trong phạm vi'))),
+      o ? h('div', { className: 'cp-panel cp-stack' },
+        h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } }, h('span', { className: 'cp-h2' }, 'Đơn ' + o.id), h('span', { className: 'cp-muted' }, o.time + ' · NV ' + props.shift.staff.split(' ').pop() + ' · Quầy ' + props.shift.counter)),
+        o.refunded ? h(C.InlineNote, { tone: 'info' }, 'Đơn đã được hoàn ' + fmt(o.refunded) + ' (' + o.refundReason + ').') : null,
+        h('table', { className: 'cp-table' }, h('thead', null, h('tr', null, h('th', null, ''), h('th', null, 'Món'), h('th', { className: 'r' }, 'SL'), h('th', { className: 'r' }, 'Tiền'))),
+          h('tbody', null, o.lines.map(function (l, i) {
+            return h('tr', { key: i }, h('td', null, h('input', { type: 'checkbox', id: 'rf-l' + i, 'aria-label': l.name, disabled: !!o.refunded, checked: !!picks[0][i], onChange: function () { var p = Object.assign({}, picks[0]); p[i] = !p[i]; picks[1](p); } })), h('td', null, l.name), h('td', { className: 'r cp-num' }, l.qty), h('td', { className: 'r' }, h(C.Money, { value: l.price * l.qty })));
+          }))),
+        h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } }, h('span', null, 'Tổng đơn · ' + payLabel(o.pay)), h(C.Money, { value: o.total })),
+        h('div', { className: 'pt-label', style: { marginTop: 8 } }, 'Hoàn / hủy đơn — chọn món cần hoàn ở bảng trên'),
+        h('div', { className: 'cp-due' }, h('span', null, 'Số tiền hoàn'), h(C.Money, { value: amount, size: 'lg' })),
+        h(C.Field, { id: 'rf-reason', label: 'Lý do (bắt buộc)', as: 'select', value: reason[0], onChange: function (e) { reason[1](e.target.value); }, options: ['', 'Món lỗi / không đạt chất lượng', 'Nhập sai món', 'Khách đổi ý', 'Món hết sau khi tạo đơn', 'Khác'] }),
+        h(C.Field, { id: 'rf-note', label: 'Ghi chú', as: 'textarea', rows: 2, placeholder: 'Mô tả ngắn…', value: note[0], onChange: function (e) { note[1](e.target.value); } }),
+        h('div', { className: 'cp-stack', style: { gap: 8 } }, h('div', { className: 'pt-label' }, 'Hoàn về'),
+          radio('wallet', 'Ví người mua', hasWallet ? 'Đúng tỷ lệ: thưởng ' + fmt(bonusPart) + ' · thật ' + fmt(amount - bonusPart) : 'Đơn không trả bằng ví', !hasWallet),
+          radio('cash', 'Tiền mặt', 'Trừ vào tiền mặt của ca hiện tại', false),
+          radio('bank', 'Chuyển khoản', 'Theo phương thức đã duyệt — kế toán xử lý', false)),
+        h(C.InlineNote, { tone: needApprove ? 'warn' : 'info' }, needApprove ? 'Hoàn > 50.000 ₫ cần quản lý duyệt — sẽ gửi yêu cầu thay vì hoàn ngay.' : 'Người xử lý: ' + props.shift.staff + ' (' + props.shift.staffId + ').'),
+        h('div', { className: 'cp-row', style: { justifyContent: 'flex-end' } },
+          h(C.Button, { variant: 'danger', icon: 'undo', size: 'lg', disabled: !amount || !reason[0] || !!o.refunded, onClick: function () { props.refund(o.id, amount, reason[0], method[0], needApprove, bonusPart); } },
+            needApprove ? 'Gửi yêu cầu duyệt ' + fmt(amount) : 'Thực hiện hoàn ' + fmt(amount)))) :
+        h('div', { className: 'cp-panel pt-empty-panel' }, h(C.Icon, { name: 'receipt', size: 32 }), h('div', null, 'Chọn một đơn bên trái để hoàn hoặc hủy.')));
+  }
+
+  /* ---------------- Chốt ca ---------------- */
+  var DENOMS = [500000, 200000, 100000, 50000, 20000, 10000, 5000, 2000, 1000];
+  function cx2() { return Array.prototype.filter.call(arguments, Boolean).join(' '); }
+  function Close(props) {
+    var orders = props.orders, sh = props.shift;
+    var recv = useState('Phạm Văn Tùng — Ca trưa'), expl = useState(''), done = useState(false), denoms = useState({}), checkSt = useState({});
+    var counted = [Object.keys(denoms[0]).some(function (k) { return denoms[0][k] > 0; }) ? DENOMS.reduce(function (t, d) { return t + d * (denoms[0][d] || 0); }, 0) : null];
+    function setDen(d, n) { var x = Object.assign({}, denoms[0]); x[d] = Math.max(0, n); denoms[1](x); }
+    var sum = function (k) { return orders.reduce(function (s, o) { return s + (o.pay[k] || 0); }, 0); };
+    var cnt = function (f) { return orders.filter(f).length; };
+    var refunds = orders.filter(function (o) { return o.refunded && !o.refundPending; });
+    var cashRefund = refunds.filter(function (o) { return o.refundMethod === 'cash'; }).reduce(function (s, o) { return s + o.refunded; }, 0);
+    var data = {
+      opening: sh.opening, orders: orders.length,
+      wallet: sum('bonus') + sum('real'), walletCount: cnt(function (o) { return o.pay.bonus || o.pay.real; }),
+      cash: sum('cash'), cashCount: cnt(function (o) { return o.pay.cash; }),
+      qr: orders.filter(function (o) { return !o.flag; }).reduce(function (s, o) { return s + (o.pay.qr || 0); }, 0), qrCount: cnt(function (o) { return o.pay.qr && !o.flag; }),
+      qrPending: cnt(function (o) { return o.pay.qrPending || o.flag; }),
+      refunds: refunds.reduce(function (s, o) { return s + o.refunded; }, 0), refundCount: refunds.length, cancelCount: props.cancels, cashRefund: cashRefund
+    };
+    var expected = data.opening + data.cash - cashRefund;
+    var diff = counted[0] == null ? null : counted[0] - expected;
+    if (done[0]) {
+      return h('div', { className: 'pt-page pt-done' }, h('div', { className: 'cp-panel cp-stack', style: { maxWidth: 560, margin: '0 auto' } },
+        h(C.StatusBadge, { tone: 'success' }, 'Đã chốt ca'),
+        h('h1', { className: 'cp-h' }, 'Biên bản bàn giao ca ' + sh.shift.split(' ')[0].toLowerCase()),
+        h('dl', { className: 'cp-kv' },
+          h('dt', null, 'Nhân viên'), h('dd', null, sh.staff + ' · ' + sh.staffId),
+          h('dt', null, 'Quầy'), h('dd', null, sh.counterName),
+          h('dt', null, 'Thời gian'), h('dd', null, sh.openedAt + ' → ' + now()),
+          h('dt', null, 'Số đơn'), h('dd', { className: 'cp-num' }, data.orders),
+          h('dt', null, 'Doanh thu thuần'), h('dd', null, fmt(data.wallet + data.cash + data.qr - data.refunds)),
+          h('dt', null, 'Nhập hàng trong ca'), h('dd', null, fmt(props.receipts.reduce(function (t, r) { return t + r.total; }, 0)) + ' · ' + props.receipts.length + ' phiếu'),
+          h('dt', null, 'Đơn chuyển ca sau'), h('dd', { className: 'cp-num' }, props.pre.filter(function (t) { return t.status !== 'done'; }).length),
+          h('dt', null, 'Tiền mặt phải có'), h('dd', null, fmt(expected)),
+          h('dt', null, 'Tiền mặt thực tế'), h('dd', null, fmt(counted[0])),
+          h('dt', null, 'Chênh lệch'), h('dd', null, diff === 0 ? 'Khớp' : (diff > 0 ? 'Thừa ' : 'Thiếu ') + fmt(Math.abs(diff))),
+          h('dt', null, 'Người nhận ca'), h('dd', null, recv[0])),
+        expl[0] ? h(C.InlineNote, { tone: 'info' }, 'Giải trình: ' + expl[0]) : null,
+        h(C.Button, { size: 'lg', block: true, icon: 'user', onClick: props.restart }, 'Đăng xuất & mở ca mới')));
+    }
+    var needExpl = diff != null && diff !== 0 && !expl[0].trim();
+    var net = data.wallet + data.cash + data.qr - data.refunds;
+    // món bán chạy
+    var agg = {}; orders.forEach(function (o) { o.lines.forEach(function (l) { if (!l.code) return; var a = agg[l.code] || (agg[l.code] = { name: l.name, qty: 0, rev: 0 }); a.qty += l.qty; a.rev += l.price * l.qty; }); });
+    var top = Object.keys(agg).map(function (k) { return agg[k]; }).sort(function (a, b) { return b.qty - a.qty || b.rev - a.rev; }).slice(0, 8);
+    var topMax = top.length ? top[0].qty : 1;
+    // doanh thu theo giờ
+    var hours = {}; orders.forEach(function (o) { var hh = Number(o.time.split(':')[0]); hours[hh] = (hours[hh] || 0) + o.total; });
+    var hk = Object.keys(hours).map(Number).sort(function (a, b) { return a - b; });
+    var hMax = Math.max.apply(null, hk.map(function (k) { return hours[k]; }).concat([1]));
+    var peak = hk.reduce(function (p, k) { return p == null || hours[k] > hours[p] ? k : p; }, null);
+    // tồn kho & đơn mở
+    var low = MENU.filter(function (m) { return m.stock != null && m.stock <= 5; }).sort(function (a, b) { return a.stock - b.stock; });
+    var rcTotal = props.receipts.reduce(function (t, r) { return t + r.total; }, 0);
+    var open = props.pre.filter(function (t) { return t.status !== 'done'; });
+    var openCash = open.filter(function (t) { return t.status === 'cash'; });
+    var avg = data.orders ? Math.round((data.wallet + data.cash + data.qr) / data.orders) : 0;
+    var mins = (function () { var a = sh.openedAt.split(':'), d = new Date(); return Math.max(0, d.getHours() * 60 + d.getMinutes() - (Number(a[0]) * 60 + Number(a[1]))); })();
+    var checks = [['count', 'Đã đếm tiền mặt trong két', counted[0] != null], ['stock', 'Đã kiểm tồn kho các món sắp hết', checkSt[0].stock], ['orders', 'Đã bàn giao đơn chưa hoàn tất cho ca sau', checkSt[0].orders || !open.length], ['clean', 'Đã vệ sinh quầy & thiết bị', checkSt[0].clean]];
+    var allChecked = checks.every(function (c) { return c[2]; });
+    function kpi(label, val, sub) { return h('div', { className: 'cp-kpi' }, h('label', null, label), val, sub ? h('small', { className: 'pt-kpi-sub' }, sub) : null); }
+    return h('div', { className: 'pt-page pt-close' },
+      h('div', { className: 'pt-close-main' },
+        h('div', { className: 'pt-close-head' },
+          h('div', null, h('h1', { className: 'cp-h' }, 'Chốt ca ' + sh.shift.split(' ')[0].toLowerCase() + ' — Quầy ' + sh.counter),
+            h('div', { className: 'cp-muted' }, sh.staff + ' · ' + sh.staffId + ' · ' + sh.canteen.split(' — ')[0])),
+          h('div', { className: 'pt-close-meta' },
+            h('span', null, h(C.Icon, { name: 'clock', size: 16 }), 'Mở ', h('b', null, sh.openedAt), ' · đã chạy ', h('b', null, Math.floor(mins / 60) + 'g ' + (mins % 60) + 'p')),
+            h('span', null, h(C.Icon, { name: 'cash', size: 16 }), 'Đầu ca ', h('b', null, fmt(sh.opening))),
+            h(C.Button, { variant: 'secondary', size: 'sm', icon: 'receipt', onClick: function () { window.print(); } }, 'In báo cáo ca'))),
+        h('div', { className: 'cp-kpis pt-kpis6' },
+          kpi('Doanh thu thuần', h(C.Money, { value: net }), 'đã trừ hoàn ' + fmt(data.refunds)),
+          kpi('Số đơn', h('span', { className: 'cp-num' }, data.orders), 'TB ' + fmt(avg) + ' / đơn'),
+          kpi('Hoàn / hủy', h('span', { className: 'cp-num' }, data.refundCount + ' / ' + data.cancelCount), data.refundCount ? fmt(data.refunds) : 'không có'),
+          kpi('Tiền mặt phải có', h(C.Money, { value: expected }), 'đầu ca + thu − hoàn'),
+          kpi('Nhập hàng trong ca', h(C.Money, { value: rcTotal }), props.receipts.length + ' phiếu nhập'),
+          kpi('Đơn chưa hoàn tất', h('span', { className: 'cp-num' + (open.length ? ' pt-low' : '') }, open.length), openCash.length ? openCash.length + ' đơn chờ thu tiền mặt' : 'chuyển cho ca sau')),
+        h('div', { className: 'pt-close-grid' },
+          h('section', { className: 'cp-panel cp-stack' },
+            h('div', { className: 'cp-h2' }, 'Doanh thu theo phương thức'),
+            h('table', { className: 'cp-table' },
+              h('thead', null, h('tr', null, h('th', null, 'Phương thức'), h('th', { className: 'r' }, 'Số GD'), h('th', { className: 'r' }, 'Số tiền'), h('th', { className: 'r' }, 'Tỷ trọng'))),
+              h('tbody', null, [['Ví (thật + thưởng)', data.walletCount, data.wallet], ['Tiền mặt', data.cashCount, data.cash], ['QR (đã đối soát)', data.qrCount, data.qr]].map(function (r) {
+                var pct = net > 0 ? Math.round(r[2] / (data.wallet + data.cash + data.qr || 1) * 100) : 0;
+                return h('tr', { key: r[0] }, h('td', null, r[0]), h('td', { className: 'r cp-num' }, r[1]), h('td', { className: 'r' }, h(C.Money, { value: r[2] })), h('td', { className: 'r' }, h('span', { className: 'pt-pct' }, h('i', { style: { '--w': pct + '%' } }), h('b', { className: 'cp-num' }, pct + '%'))));
+              }).concat([
+                data.qrPending ? h('tr', { key: 'qp' }, h('td', null, 'QR chờ xác minh — chưa tính'), h('td', { className: 'r cp-num' }, data.qrPending), h('td', { className: 'r' }, h(C.StatusBadge, { tone: 'warning' }, 'Tra soát')), h('td')) : null,
+                h('tr', { key: 'rf' }, h('td', null, 'Hoàn / hủy'), h('td', { className: 'r cp-num' }, data.refundCount), h('td', { className: 'r' }, h(C.Money, { value: -data.refunds, tone: 'danger' })), h('td')),
+                h('tr', { key: 't', className: 'is-total' }, h('td', null, 'Tổng'), h('td'), h('td', { className: 'r' }, h(C.Money, { value: net })), h('td'))]))),
+            (function () {
+              var gross = data.wallet + data.cash + data.qr || 1;
+              var seg = [['Ví', data.wallet, 'var(--info)'], ['Tiền mặt', data.cash, 'var(--accent)'], ['QR', data.qr, 'var(--success)']];
+              return h('div', { className: 'pt-split' },
+                h('div', { className: 'pt-label' }, 'Cơ cấu thanh toán'),
+                h('div', { className: 'pt-split-bar', role: 'img', 'aria-label': seg.map(function (x) { return x[0] + ' ' + Math.round(x[1] / gross * 100) + '%'; }).join(', ') },
+                  seg.map(function (x) { return x[1] ? h('i', { key: x[0], style: { flexGrow: x[1], background: x[2] } }) : null; })),
+                h('div', { className: 'pt-split-legend' }, seg.map(function (x) { return h('span', { key: x[0] }, h('i', { style: { background: x[2] } }), x[0], h('b', { className: 'cp-num' }, Math.round(x[1] / gross * 100) + '%')); })));
+            })()),
+          h('section', { className: 'cp-panel cp-stack pt-hours-panel' },
+            h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } }, h('span', { className: 'cp-h2' }, 'Doanh thu theo giờ'), peak != null ? h('span', { className: 'cp-muted' }, 'Cao điểm ' + peak + ':00–' + (peak + 1) + ':00') : null),
+            h('div', { className: 'pt-hours', role: 'img', 'aria-label': 'Biểu đồ doanh thu theo giờ, 0h đến 23h' }, Array.apply(null, Array(24)).map(function (_, k) {
+              var v = hours[k] || 0;
+              return h('div', { key: k, className: 'pt-hour' + (k === peak ? ' is-peak' : '') + (v ? '' : ' is-zero'), title: k + ':00–' + (k + 1) + ':00 · ' + fmt(v) },
+                h('small', { className: 'cp-num' }, v ? Math.round(v / 1000) + 'k' : ''),
+                h('i', { style: { height: v ? Math.max(8, v / hMax * 100) + '%' : '2px' } }),
+                h('span', null, k % 3 === 0 ? k + 'h' : ''));
+            })),
+            hk.length ? null : h('div', { className: 'cp-muted' }, 'Chưa có đơn trong ca')),
+          h('section', { className: 'cp-panel cp-stack' },
+            h('div', { className: 'cp-h2' }, 'Món bán chạy trong ca'),
+            top.length ? h('ol', { className: 'pt-top' }, top.map(function (t, i) {
+              return h('li', { key: t.name }, h('span', { className: 'pt-top-rank' }, i + 1), h('span', { className: 'pt-top-name' }, h('b', null, t.name), h('span', { className: 'pt-top-bar' }, h('i', { style: { width: (t.qty / topMax * 100) + '%' } }))), h('span', { className: 'r' }, h('b', { className: 'cp-num' }, t.qty + ' phần'), h('small', { className: 'cp-muted' }, fmt(t.rev))));
+            })) : h('div', { className: 'pt-empty' }, 'Chưa bán món nào'),
+            h('div', { className: 'pt-top-foot' },
+              h('span', null, 'Tổng đã bán', h('b', { className: 'cp-num' }, Object.keys(agg).reduce(function (t, k) { return t + agg[k].qty; }, 0) + ' phần')),
+              h('span', null, 'Số loại món', h('b', { className: 'cp-num' }, Object.keys(agg).length)),
+              h('span', null, 'Món hết hàng', h('b', { className: 'cp-num' }, MENU.filter(function (m) { return m.stock === 0; }).length))))),
+        h('section', { className: 'cp-panel cp-stack' },
+          h('div', { className: 'cp-row', style: { justifyContent: 'space-between', flexWrap: 'wrap' } },
+            h('span', { className: 'cp-h2' }, 'Đếm tiền mặt trong két'),
+            h('span', { className: 'cp-muted' }, 'Bấm +/− hoặc nhập số tờ theo mệnh giá')),
+          h('div', { className: 'pt-denoms' }, DENOMS.map(function (d) {
+            var n = denoms[0][d] || 0;
+            return h('div', { key: d, className: 'pt-denom' + (n ? ' is-on' : '') },
+              h('b', null, d >= 1000 ? (d / 1000) + 'k' : d),
+              h('span', { className: 'pt-qty' },
+                h('button', { type: 'button', 'aria-label': 'Bớt tờ ' + fmt(d), disabled: !n, onClick: function () { setDen(d, n - 1); } }, h(C.Icon, { name: 'minus', size: 14 })),
+                h('input', { inputMode: 'numeric', 'aria-label': 'Số tờ ' + fmt(d), value: n || '', placeholder: '0', onChange: function (e) { setDen(d, Number(e.target.value.replace(/\D/g, '')) || 0); } }),
+                h('button', { type: 'button', 'aria-label': 'Thêm tờ ' + fmt(d), onClick: function () { setDen(d, n + 1); } }, h(C.Icon, { name: 'plus', size: 14 }))),
+              h('small', { className: 'cp-muted cp-num' }, n ? fmt(n * d) : '—'));
+          })),
+          h('div', { className: 'pt-count-foot' },
+            h('div', { className: 'pt-count-row' }, h('span', null, 'Tiền mặt phải có'), h(C.Money, { value: expected })),
+            h('div', { className: 'pt-count-row' }, h('span', null, 'Tiền đếm được'), counted[0] == null ? h('span', { className: 'cp-muted' }, 'Chưa đếm') : h(C.Money, { value: counted[0] })),
+            h('div', { className: cx2('cp-variance', counted[0] == null || diff === 0 ? 'is-ok' : diff > 0 ? 'is-over' : 'is-short') },
+              h('span', { style: { font: '600 15px/22px var(--font-sans)', display: 'flex', gap: 8, alignItems: 'center' } }, h(C.Icon, { name: counted[0] == null || diff === 0 ? 'check' : 'alert' }), counted[0] == null ? 'Chưa đếm tiền' : diff === 0 ? 'Khớp' : diff > 0 ? 'Thừa' : 'Thiếu'),
+              counted[0] != null ? h(C.Money, { value: diff, size: 'lg', sign: true }) : null)))),
+      h('aside', { className: 'cp-panel cp-stack pt-close-side' },
+        h('div', { className: 'cp-h2' }, 'Bàn giao ca'),
+        h(C.Field, { id: 'cl-recv', label: 'Người nhận ca', as: 'select', value: recv[0], onChange: function (e) { recv[1](e.target.value); }, options: ['Phạm Văn Tùng — Ca trưa', 'Quản lý Canteen'] }),
+        h('div', { className: 'cp-stack', style: { gap: 6 } }, h('div', { className: 'pt-label' }, 'Kiểm tra trước khi chốt'),
+          checks.map(function (c) {
+            var auto = c[0] === 'count' || (c[0] === 'orders' && !open.length);
+            return h('label', { key: c[0], className: 'pt-check' + (c[2] ? ' is-on' : '') },
+              h('input', { type: 'checkbox', checked: c[2], disabled: auto, onChange: function () { var n = Object.assign({}, checkSt[0]); n[c[0]] = !n[c[0]]; checkSt[1](n); } }),
+              h('span', null, c[1], auto && c[0] === 'count' ? h('small', null, counted[0] == null ? 'Tự đánh dấu khi đếm xong' : 'Đã đếm ' + fmt(counted[0])) : null));
+          })),
+h('section', { className: 'cp-stack pt-side-stock' },
+            h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } }, h('span', { className: 'pt-label' }, 'Tồn kho cần chú ý'), h(C.Button, { variant: 'ghost', size: 'sm', icon: 'store', onClick: props.goStock }, 'Nhập hàng')),
+            low.length ? h('ul', { className: 'pt-lowlist' }, low.slice(0, 8).map(function (m) {
+              return h('li', { key: m.code }, h('span', null, h('small', { className: 'cp-muted' }, m.code + ' '), m.name), h(C.StatusBadge, { tone: m.stock === 0 ? 'danger' : 'warning', icon: m.stock === 0 ? 'ban' : 'clock' }, m.stock === 0 ? 'Hết hàng' : 'Còn ' + m.stock));
+            })) : h('div', { className: 'pt-empty' }, 'Không có món sắp hết')),
+        h(C.Field, { id: 'cl-expl', label: 'Giải trình chênh lệch', as: 'textarea', rows: 3, value: expl[0], placeholder: diff ? 'Bắt buộc khi có chênh lệch' : 'Không bắt buộc khi khớp', error: needExpl ? 'Cần giải trình vì tiền đếm lệch ' + fmt(Math.abs(diff)) : null, onChange: function (e) { expl[1](e.target.value); } }),
+        data.qrPending ? h(C.InlineNote, null, data.qrPending + ' giao dịch QR chờ xác minh/tra soát không tính vào doanh thu ca.') : null,
+        props.offlinePending ? h(C.InlineNote, { tone: 'danger' }, 'Còn ' + props.offlinePending + ' giao dịch offline chưa đồng bộ — chờ có mạng trước khi chốt.') : null,
+        h(C.Button, { size: 'lg', block: true, icon: 'check', disabled: counted[0] == null || needExpl || props.offlinePending > 0 || !allChecked, onClick: function () { done[1](true); } }, 'Chốt ca & bàn giao'),
+        !allChecked ? h('div', { className: 'cp-note' }, h(C.Icon, { name: 'info', size: 14 }), 'Hoàn tất các mục kiểm tra để chốt ca.') : null));
+  }
+
+
+  /* ---------------- Biên lai sau thanh toán (2.3.4, tính năng 27) ---------------- */
+  function Receipt(props) {
+    var r = props.r, sh = props.shift;
+    var row = function (a, b, cls) { return h('div', { className: 'cp-sum-row' + (cls ? ' ' + cls : '') }, h('span', null, a), b); };
+    var paidOther = (r.pay.cash || 0) + (r.pay.qr || 0) + (r.pay.qrPending || 0);
+    return h('div', { className: 'cp-scrim pt-scrim', onClick: function (e) { if (e.target === e.currentTarget) props.close(); } },
+      h('div', { className: 'cp-dialog pt-receipt', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Biên lai ' + r.id },
+        h('div', { className: 'pt-bill' },
+          h('div', { className: 'pt-bill-head' }, h('b', null, sh.canteen), h('span', null, 'Quầy ' + sh.counter + ' · ' + sh.staff + ' · ' + r.time + ' ' + new Date().toLocaleDateString('vi-VN')), h('span', null, 'Đơn ' + r.id + (r.offline ? ' · lưu offline' : ''))),
+          h('div', { className: 'pt-bill-sec' }, r.lines.map(function (l, i) { return row(l.qty + ' × ' + l.name, h(C.Money, { value: l.price * l.qty })); })),
+          h('div', { className: 'pt-bill-sec' },
+            row('Giá gốc', h(C.Money, { value: r.orig })),
+            r.disc ? row('Khuyến mại / giảm giá', h(C.Money, { value: -r.disc }), 'is-discount') : null,
+            r.pay.bonus ? row('Trừ tiền thưởng (ví)', h(C.Money, { value: -r.pay.bonus, tone: 'accent' })) : null,
+            r.pay.real ? row('Trừ tiền thật (ví)', h(C.Money, { value: -r.pay.real })) : null,
+            r.pay.cash ? row('Tiền mặt', h(C.Money, { value: r.pay.cash })) : null,
+            r.pay.qr ? row(r.flag ? 'QR — đang tra soát' : 'QR ngân hàng', h(C.Money, { value: r.pay.qr })) : null,
+            r.pay.qrPending ? row('QR — chờ xác minh', h(C.Money, { value: r.pay.qrPending })) : null,
+            row('Thực thu', h(C.Money, { value: r.total - (r.pay.bonus || 0), size: 'lg' }), 'is-total')),
+          r.balBefore != null ? h('div', { className: 'pt-bill-sec' },
+            row('Người mua', h('b', null, r.buyer)),
+            row('Số dư ví trước', h(C.Money, { value: r.balBefore })),
+            row('Số dư ví sau', h(C.Money, { value: r.balAfter }))) : h('div', { className: 'pt-bill-sec' }, row('Người mua', h('b', null, 'Khách lẻ'))),
+          h('div', { className: 'pt-bill-foot' }, 'Cảm ơn quý khách · Tra cứu và khiếu nại trên Ví Canteen')),
+        h('div', { className: 'pt-dialog-foot' },
+          h(C.Button, { variant: 'secondary', icon: 'receipt', onClick: function () { props.say('Đã gửi lệnh in biên lai ' + r.id, 'receipt'); } }, 'In biên lai'),
+          h(C.Button, { size: 'lg', icon: 'check', onClick: props.close }, 'Xong · đơn mới'))));
+  }
+
+  /* ---------------- Nhập hàng ---------------- */
+  function readImage(file, cb) { if (!file) return; var r = new FileReader(); r.onload = function () { cb(r.result); }; r.readAsDataURL(file); }
+  function Thumb(props) {
+    var ref = useRef();
+    return h('span', { className: 'pt-thumb' + (props.src ? '' : ' is-empty') },
+      props.src ? h('img', { src: props.src, alt: '' }) : h(C.Icon, { name: 'image', size: props.big ? 32 : 20, stroke: 1.6 }),
+      props.onPick ? h('button', { type: 'button', className: 'pt-thumb-btn', 'aria-label': props.label || 'Tải ảnh món', onClick: function () { ref.current.click(); } }, h(C.Icon, { name: props.src ? 'edit' : 'plus', size: 14 })) : null,
+      props.onPick ? h('input', { ref: ref, type: 'file', accept: 'image/*', hidden: true, onChange: function (e) { readImage(e.target.files[0], props.onPick); e.target.value = ''; } }) : null);
+  }
+  function NewItemDialog(props) {
+    var img = useState(null), name = useState(''), cat = useState(props.cat && props.cat !== 'all' ? props.cat : 'com'), price = useState(''), cost = useState(''), qty = useState(''), group = useState(GROUPS[0]);
+    var prefix = CATS.filter(function (c) { return c.id === cat[0]; })[0].prefix;
+    var n = MENU.filter(function (m) { return m.code[0] === prefix; }).map(function (m) { return Number(m.code.slice(1)); });
+    var code = prefix + String((n.length ? Math.max.apply(null, n) : 0) + 1).padStart(2, '0');
+    var dup = name[0].trim() && MENU.some(function (m) { return m.name.toLowerCase() === name[0].trim().toLowerCase(); });
+    var ok = name[0].trim() && Number(price[0]) > 0 && !dup;
+    var drop = useState(false);
+    function num(st) { return function (e) { st[1](e.target.value.replace(/\D/g, '')); }; }
+    return h('div', { className: 'cp-scrim pt-scrim', onClick: function (e) { if (e.target === e.currentTarget) props.close(); } },
+      h('div', { className: 'cp-dialog pt-newitem', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Thêm món mới' },
+        h('div', { className: 'cp-dialog-head' }, h('h2', { className: 'cp-h' }, 'Thêm món mới'), h(C.Button, { variant: 'ghost', icon: 'x', 'aria-label': 'Đóng', onClick: props.close })),
+        h('div', { className: 'pt-newitem-grid' },
+          h('label', { className: 'pt-drop' + (drop[0] ? ' is-over' : '') + (img[0] ? ' has-img' : ''),
+              onDragOver: function (e) { e.preventDefault(); drop[1](true); }, onDragLeave: function () { drop[1](false); },
+              onDrop: function (e) { e.preventDefault(); drop[1](false); readImage(e.dataTransfer.files[0], img[1]); } },
+            img[0] ? h('img', { src: img[0], alt: 'Ảnh món mới' }) : h('span', { className: 'pt-drop-empty' }, h(C.Icon, { name: 'image', size: 36, stroke: 1.5 }), h('b', null, 'Tải ảnh món lên'), h('small', null, 'Bấm để chọn hoặc kéo thả ảnh · JPG, PNG')),
+            h('input', { type: 'file', accept: 'image/*', hidden: true, onChange: function (e) { readImage(e.target.files[0], img[1]); } }),
+            img[0] ? h('span', { className: 'pt-drop-change' }, h(C.Icon, { name: 'edit', size: 14 }), 'Đổi ảnh') : null),
+          h('div', { className: 'cp-stack' },
+            h(C.Field, { id: 'ni-name', label: 'Tên món', placeholder: 'VD: Mì xào bò', value: name[0], onChange: function (e) { name[1](e.target.value); }, error: dup ? 'Món này đã có trong danh sách — nhập thêm hàng ở bảng bên ngoài.' : null }),
+            h('div', { className: 'pt-2col' },
+              h(C.Field, { id: 'ni-cat', label: 'Nhóm món', as: 'select', value: CATS.filter(function (c) { return c.id === cat[0]; })[0].label, onChange: function (e) { cat[1](CATS.filter(function (c) { return c.label === e.target.value; })[0].id); }, options: CATS.slice(1).map(function (c) { return c.label; }) }),
+              h(C.Field, { id: 'ni-code', label: 'Mã món (tự sinh)', value: code, onChange: function () {} })),
+            h('div', { className: 'pt-2col' },
+              h(C.Field, { id: 'ni-price', label: 'Giá bán', numeric: true, suffix: '₫', placeholder: '0', value: price[0] ? Number(price[0]).toLocaleString('vi-VN') : '', onChange: num(price) }),
+              h(C.Field, { id: 'ni-cost', label: 'Giá nhập / phần', numeric: true, suffix: '₫', placeholder: '0', value: cost[0] ? Number(cost[0]).toLocaleString('vi-VN') : '', onChange: num(cost) })),
+            h('div', { className: 'pt-2col' },
+              h(C.Field, { id: 'ni-qty', label: 'Số lượng nhập lần đầu', numeric: true, placeholder: '0', value: qty[0], onChange: num(qty) }),
+              h(C.Field, { id: 'ni-group', label: 'Nhóm hạn chế (phụ huynh chặn được)', as: 'select', value: group[0], onChange: function (e) { group[1](e.target.value); }, options: GROUPS })),
+            Number(price[0]) > 0 && Number(cost[0]) > 0 ? h(C.InlineNote, { tone: Number(cost[0]) >= Number(price[0]) ? 'danger' : 'info' }, Number(cost[0]) >= Number(price[0]) ? 'Giá nhập đang cao hơn hoặc bằng giá bán.' : 'Lãi gộp mỗi phần ' + fmt(Number(price[0]) - Number(cost[0])) + ' (' + Math.round((1 - Number(cost[0]) / Number(price[0])) * 100) + '%).') : null)),
+        h('div', { className: 'pt-dialog-foot' },
+          h('span', { className: 'cp-muted' }, Number(qty[0]) > 0 && Number(cost[0]) > 0 ? 'Thêm vào phiếu nhập: ' + qty[0] + ' × ' + fmt(Number(cost[0])) + ' = ' + fmt(Number(qty[0]) * Number(cost[0])) : 'Món mới sẽ hiện ngay ở màn Bán hàng.'),
+          h(C.Button, { size: 'lg', icon: 'check', disabled: !ok, onClick: function () {
+            props.save({ code: code, name: name[0].trim(), price: Number(price[0]), cat: cat[0], cost: Number(cost[0]) || 0, stock: 0, image: img[0] || undefined, group: group[0] === GROUPS[0] ? undefined : group[0], isNew: true }, Number(qty[0]) || 0);
+          } }, 'Lưu món mới'))));
+  }
+  function Receive(props) {
+    var q = useState(''), cat = useState('all'), newCat = useState(null), lines = useState({}), supplier = useState(SUPPLIERS[0]), note = useState(''), dlg = useState(false), tick = useState(0);
+    var items = MENU.filter(function (m) { return (cat[0] === 'all' || m.cat === cat[0]) && (!q[0] || (m.name + ' ' + m.code).toLowerCase().indexOf(q[0].toLowerCase()) >= 0); });
+    var cats = CATS.map(function (c) { return { id: c.id, label: c.label, count: c.id === 'all' ? MENU.length : MENU.filter(function (m) { return m.cat === c.id; }).length }; });
+    function line(code) { var m = MENU.filter(function (x) { return x.code === code; })[0]; return lines[0][code] || { qty: 0, cost: m.cost || 0 }; }
+    function set(code, patch) { var n = Object.assign({}, lines[0]); n[code] = Object.assign({}, line(code), patch); lines[1](n); }
+    var picked = MENU.filter(function (m) { return line(m.code).qty > 0; });
+    var total = picked.reduce(function (s, m) { var l = line(m.code); return s + l.qty * l.cost; }, 0);
+    var units = picked.reduce(function (s, m) { return s + line(m.code).qty; }, 0);
+    function save() {
+      var rows = picked.map(function (m) { var l = line(m.code); return { code: m.code, name: m.name, qty: l.qty, cost: l.cost, before: m.stock || 0 }; });
+      rows.forEach(function (r) { var m = MENU.filter(function (x) { return x.code === r.code; })[0]; m.stock = (m.stock || 0) + r.qty; m.cost = r.cost; delete m.status; });
+      props.saveReceipt({ supplier: supplier[0], note: note[0], rows: rows, total: total });
+      lines[1]({}); note[1]('');
+    }
+    function money(v) { return v ? Number(v).toLocaleString('vi-VN') : ''; }
+    return h('div', { className: 'pt-page pt-receive' },
+      h('div', { className: 'cp-panel cp-stack pt-receive-list' },
+        h('div', { className: 'cp-row', style: { justifyContent: 'space-between', flexWrap: 'wrap' } },
+          h('div', null, h('h1', { className: 'cp-h' }, 'Nhập hàng'), h('div', { className: 'cp-muted' }, 'Nhập số lượng cộng thêm và giá nhập cho từng món · bấm vào ảnh để tải ảnh món')),
+          h(C.Button, { icon: 'plus', onClick: function () { dlg[1](true); } }, 'Thêm món mới')),
+        h(C.Field, { id: 'rc-q', icon: 'search', placeholder: 'Tìm món theo tên hoặc mã', value: q[0], onChange: function (e) { q[1](e.target.value); } }),
+        h('div', { className: 'pt-cat-row' },
+          h(C.CategoryTabs, { items: cats, active: cat[0], onChange: cat[1] }),
+          newCat[0] === null ? h('button', { type: 'button', className: 'pt-cat-add', onClick: function () { newCat[1](''); } }, h(C.Icon, { name: 'plus', size: 16 }), 'Thêm mục')
+            : h('form', { className: 'pt-cat-form', onSubmit: function (e) {
+                e.preventDefault(); var v = newCat[0].trim(); if (!v) return;
+                if (CATS.some(function (c) { return c.label.toLowerCase() === v.toLowerCase(); })) return props.say('Mục “' + v + '” đã có', 'alert');
+                var c = addCat(v); newCat[1](null); cat[1](c.id); props.say('Đã tạo mục “' + v + '” · mã món bắt đầu bằng ' + c.prefix, 'plus');
+              } },
+              h('input', { autoFocus: true, 'aria-label': 'Tên mục mới', placeholder: 'Tên mục mới, VD: Món chay', value: newCat[0], maxLength: 32, onChange: function (e) { newCat[1](e.target.value); }, onKeyDown: function (e) { if (e.key === 'Escape') newCat[1](null); } }),
+              h(C.Button, { size: 'sm', type: 'submit', disabled: !newCat[0].trim() }, 'Tạo'),
+              h(C.Button, { size: 'sm', variant: 'ghost', icon: 'x', 'aria-label': 'Hủy', onClick: function () { newCat[1](null); } }))),
+        h('div', { className: 'pt-rc-table', role: 'table', 'aria-label': 'Danh sách món để nhập hàng' },
+          h('div', { className: 'pt-rc-row is-head', role: 'row' }, h('span', null, 'Món'), h('span', { className: 'r' }, 'Tồn kho'), h('span', { className: 'r' }, 'Nhập thêm'), h('span', { className: 'r' }, 'Giá nhập / phần'), h('span', { className: 'r' }, 'Thành tiền')),
+          items.map(function (m) {
+            var l = line(m.code), stock = m.stock || 0;
+            return h('div', { key: m.code, role: 'row', className: 'pt-rc-row' + (l.qty > 0 ? ' is-on' : '') },
+              h('span', { className: 'pt-rc-item' },
+                h(Thumb, { src: m.image, label: 'Tải ảnh cho ' + m.name, onPick: function (src) { m.image = src; tick[1](tick[0] + 1); props.say('Đã cập nhật ảnh ' + m.name, 'check'); } }),
+                h('span', { className: 'pt-rc-name' }, h('small', null, m.code + (m.isNew ? ' · món mới' : '')), h('b', null, m.name), h('small', null, 'Giá bán ' + fmt(m.price)))),
+              h('span', { className: 'r' },
+                h('span', { className: 'pt-stock' }, h('b', { className: 'cp-num' + (stock === 0 ? ' pt-out' : stock <= 5 ? ' pt-low' : '') }, stock), l.qty > 0 ? h('span', { className: 'pt-after cp-num', 'aria-label': 'sau nhập ' + (stock + l.qty) }, '→ ' + (stock + l.qty)) : null),
+                h('small', { className: 'cp-muted' }, stock === 0 ? 'Hết hàng' : stock <= 5 ? 'Sắp hết' : 'phần')),
+              h('span', { className: 'r' }, h('span', { className: 'pt-qty' },
+                h('button', { type: 'button', 'aria-label': 'Bớt', disabled: !l.qty, onClick: function () { set(m.code, { qty: Math.max(0, l.qty - 1) }); } }, h(C.Icon, { name: 'minus', size: 16 })),
+                h('input', { inputMode: 'numeric', 'aria-label': 'Số lượng nhập ' + m.name, value: l.qty || '', placeholder: '0', onChange: function (e) { set(m.code, { qty: Number(e.target.value.replace(/\D/g, '')) || 0 }); } }),
+                h('button', { type: 'button', 'aria-label': 'Thêm', onClick: function () { set(m.code, { qty: l.qty + 1 }); } }, h(C.Icon, { name: 'plus', size: 16 })))),
+              h('span', { className: 'r' }, h('span', { className: 'pt-cost' }, h('input', { inputMode: 'numeric', 'aria-label': 'Giá nhập ' + m.name, value: money(l.cost), placeholder: '0', onChange: function (e) { set(m.code, { cost: Number(e.target.value.replace(/\D/g, '')) || 0 }); } }), h('span', null, '₫'))),
+              h('span', { className: 'r' }, l.qty > 0 ? h(C.Money, { value: l.qty * l.cost }) : h('span', { className: 'cp-muted' }, '—')));
+          }),
+          items.length ? null : h('div', { className: 'pt-empty' }, 'Không có món phù hợp — bấm “Thêm món mới”.'))),
+      h('div', { className: 'pt-receive-side' },
+        h('div', { className: 'cp-panel cp-stack' },
+          h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } }, h('span', { className: 'cp-h2' }, 'Phiếu nhập ', h('span', { className: 'cp-num' }, 'PN-' + String(props.seq).padStart(4, '0'))), h('span', { className: 'cp-muted' }, now() + ' · NV ' + props.shift.staff.split(' ').pop())),
+          h(C.Field, { id: 'rc-sup', label: 'Nhà cung cấp', as: 'select', value: supplier[0], onChange: function (e) { supplier[1](e.target.value); }, options: SUPPLIERS }),
+          picked.length ? h('ul', { className: 'pt-rc-sum' }, picked.map(function (m) { var l = line(m.code); return h('li', { key: m.code }, h('span', null, h('b', null, l.qty + '×'), ' ', m.name), h(C.Money, { value: l.qty * l.cost })); }))
+            : h('div', { className: 'pt-empty' }, 'Chưa có món nào. Nhập số lượng ở bảng bên trái.'),
+          picked.some(function (m) { return !line(m.code).cost; }) ? h(C.InlineNote, { tone: 'warn' }, 'Có món chưa nhập giá nhập.') : null,
+          h('div', { className: 'cp-due' }, h('span', null, 'Tổng tiền'), h(C.Money, { value: total, size: 'lg' })),
+          h(C.Field, { id: 'rc-note', label: 'Ghi chú', as: 'textarea', rows: 2, placeholder: 'Số hóa đơn, hạn dùng…', value: note[0], onChange: function (e) { note[1](e.target.value); } }),
+          h(C.Button, { size: 'lg', block: true, icon: 'check', disabled: !picked.length, onClick: save }, picked.length ? 'Lưu phiếu nhập · ' + fmt(total) : 'Lưu phiếu nhập')),
+        h('div', { className: 'cp-panel cp-stack' },
+          h('span', { className: 'cp-h2' }, 'Phiếu nhập trong ca'),
+          props.receipts.length ? props.receipts.slice().reverse().map(function (r) {
+            return h('div', { key: r.id, className: 'pt-rc-hist' },
+              h('div', { className: 'cp-row', style: { justifyContent: 'space-between' } }, h('b', { className: 'cp-num' }, r.id), h(C.Money, { value: r.total })),
+              h('small', { className: 'cp-muted' }, r.time + ' · ' + r.supplier + ' · ' + r.rows.length + ' món, ' + r.rows.reduce(function (s, x) { return s + x.qty; }, 0) + ' phần'));
+          }) : h('div', { className: 'cp-muted' }, 'Chưa có phiếu nhập nào trong ca.'))),
+      dlg[0] ? h(NewItemDialog, { cat: cat[0], close: function () { dlg[1](false); }, save: function (item, qty) {
+        MENU.push(item); dlg[1](false);
+        if (qty > 0) { var n = Object.assign({}, lines[0]); n[item.code] = { qty: qty, cost: item.cost }; lines[1](n); }
+        q[1]('');
+        props.say('Đã thêm món mới ' + item.code + ' · ' + item.name + (qty > 0 ? ' — đã đưa vào phiếu nhập' : ''), 'plus');
+      } }) : null);
+  }
+
+  /* ---------------- App ---------------- */
+  function App() {
+    var S = useState(null), shift = S[0];
+    var cart = useState([]), buyer = useState('guest'), view = useState('sell'), dialog = useState(null);
+    var orders = useState(SEED_ORDERS), seq = useState(412), offSeq = useState(1), offline = useState(false), queue = useState([]), syncing = useState(null);
+    var receipts = useState([]), rcSeq = useState(1), menuVer = useState(0);
+    var receipt = useState(null), pre = useState(SEED_PRE), preSeq = useState(1192), toast = useState(null), cancels = useState(0), pendingWallet = useState(null);
+    var toastT = useRef();
+    function say(text, icon) { toast[1]({ text: text, icon: icon }); clearTimeout(toastT.current); toastT.current = setTimeout(function () { toast[1](null); }, 3200); }
+
+    var netRef = useRef(function () {});
+    useEffect(function () {
+      function up() { netRef.current(true); } function down() { netRef.current(false); }
+      window.addEventListener('online', up); window.addEventListener('offline', down);
+      return function () { window.removeEventListener('online', up); window.removeEventListener('offline', down); };
+    }, []);
+    if (!shift) return h(React.Fragment, null, h(Login, { onOpen: function (s) { S[1](s); say('Đã mở ca · tiền đầu ca ' + fmt(s.opening)); } }), h(Toast, { toast: toast[0] }));
+
+    var app = { shift: shift, cart: cart[0], buyer: buyer[0], offline: offline[0], seq: seq[0], offSeq: offSeq[0] };
+    var sub = lineTotal(cart[0]), total = sub - promoOf(cart[0]);
+    var orderCode = offline[0] ? 'OFF-' + String(offSeq[0]).padStart(4, '0') : 'DH-' + String(seq[0]).padStart(4, '0');
+
+    function add(m) { var c = cart[0].slice(), i = c.findIndex(function (l) { return l.code === m.code; }); if (m.stock != null && (i >= 0 ? c[i].qty : 0) >= m.stock) return say('Hết tồn kho ' + m.name + ' — vào Nhập hàng để cộng thêm', 'alert'); if (i >= 0) c[i] = Object.assign({}, c[i], { qty: c[i].qty + 1 }); else c.push({ code: m.code, name: m.name, price: m.price, qty: 1 }); cart[1](c); }
+    function setQty(i, d) { cart[1](cart[0].map(function (l, j) { return j === i ? Object.assign({}, l, { qty: l.qty + d }) : l; }).filter(function (l) { return l.qty > 0; })); }
+    function setBuyer(b) {
+      if (b && b !== 'guest' && b.role === 'student') {
+        var removed = cart[0].filter(function (l) { var m = MENU.filter(function (x) { return x.code === l.code; })[0]; return m.group && b.blocked.indexOf(m.group) >= 0; });
+        if (removed.length) { cart[1](cart[0].filter(function (l) { return removed.indexOf(l) < 0; })); say('Đã bỏ món bị chặn với học sinh: ' + removed.map(function (l) { return l.name; }).join(', '), 'lock'); }
+      }
+      buyer[1](b);
+    }
+    function finish(pay, msg, icon, extra) {
+      var b = buyer[0], isAcc = b && b !== 'guest';
+      var balBefore = isAcc ? BUYERS[b.id].real + BUYERS[b.id].bonus : null;
+      var o = Object.assign({ id: orderCode, time: now(), buyer: isAcc ? b.name + ' · ' + b.id : 'Khách lẻ', buyerId: isAcc ? b.id : null, lines: cart[0], orig: sub, disc: sub - total, total: total, pay: pay, offline: offline[0] }, extra || {});
+      orders[1](orders[0].concat([o]));
+      cart[0].forEach(function (l) { var m = MENU.filter(function (x) { return x.code === l.code; })[0]; if (m && m.stock != null) m.stock = Math.max(0, m.stock - l.qty); });
+      if (isAcc && (pay.bonus || pay.real)) {
+        var nb = Object.assign({}, BUYERS[b.id]); nb.bonus -= pay.bonus || 0; nb.real -= pay.real || 0;
+        if (nb.limit) nb.limit = { used: nb.limit.used + (pay.bonus || 0) + (pay.real || 0), max: nb.limit.max };
+        BUYERS[b.id] = nb;
+      }
+      if (offline[0]) { queue[1](queue[0].concat([o.id])); offSeq[1](offSeq[0] + 1); } else seq[1](seq[0] + 1);
+      cart[1]([]); buyer[1]('guest'); dialog[1](null); pendingWallet[1](null);
+      say(o.id + ' — ' + msg, icon);
+      receipt[1](Object.assign({ balBefore: balBefore, balAfter: isAcc ? BUYERS[b.id].real + BUYERS[b.id].bonus : null, msg: msg }, o));
+    }
+    function flag(code, amt, why) {
+      finish(Object.assign({}, pendingWallet[0] ? pendingWallet[0].pay : {}, { qr: amt }), 'đã chuyển tra soát, chưa tính doanh thu', 'alert', { flag: why || 'Cần kiểm tra' });
+    }
+    // theo dõi mạng thật của thiết bị: mất mạng → offline, có mạng lại → đồng bộ
+    netRef.current = function (on) { if (on === offline[0]) toggleNet(); };
+    function toggleNet() {
+      if (!offline[0]) { offline[1](true); say('Mất mạng — đã chuyển sang chế độ offline', 'wifiOff'); return; }
+      offline[1](false);
+      var n = queue[0].length; if (!n) { say('Đã có mạng', 'wifi'); return; }
+      syncing[1]({ done: 0, total: n });
+      var k = 0, t = setInterval(function () {
+        k++; syncing[1]({ done: k, total: n });
+        if (k >= n) {
+          clearInterval(t);
+          orders[1](function (list) { return list.map(function (o) { return o.offline && o.pay.qrPending ? Object.assign({}, o, { flag: 'QR offline chưa tìm thấy giao dịch khớp — cần tra soát' }) : o; }); });
+          setTimeout(function () { syncing[1](null); queue[1]([]); say('Đã đồng bộ ' + n + ' giao dịch offline', 'sync'); }, 900);
+        }
+      }, 500);
+    }
+    function nextPre(code) {
+      var order = ['cash', 'new', 'preparing', 'ready', 'done'];
+      pre[1](pre[0].map(function (t) { return t.code === code ? Object.assign({}, t, { status: order[order.indexOf(t.status) + 1] }, t.status === 'cash' ? { cashDue: 0, buyer: t.buyer.replace(' · ví thiếu', '') + ' · đã thu tiền mặt' } : {}) : t; }).filter(function (t) { return t.status !== 'done'; }));
+      var t = pre[0].filter(function (x) { return x.code === code; })[0];
+      if (t.status === 'cash') {
+        orders[1](orders[0].concat([{ id: code, time: now(), buyer: t.buyer.split(' · ').slice(0, 2).join(' · '), lines: [{ code: '', name: 'Thu tiền mặt đơn ' + code, price: t.cashDue, qty: 1 }], total: t.cashDue, pay: { cash: t.cashDue } }]));
+        return say(code + ' — đã thu ' + fmt(t.cashDue) + ' tiền mặt, chuyển sang Mới nhận', 'cash');
+      }
+      say(code + ' — ' + (t.status === 'new' ? 'bắt đầu chuẩn bị' : t.status === 'preparing' ? 'đã báo sẵn sàng' : 'đã giao cho người nhận'));
+    }
+    function incoming() {
+      var code = 'APP-' + preSeq[0], uni = preSeq[0] % 2 === 0;
+      pre[1](pre[0].concat([{ code: code, source: 'app', uni: uni, buyer: uni ? 'Đỗ Quang Huy · SV K21' : 'Bùi Ngọc Trâm · 7A4', status: 'new', pickupAt: addMin(now(), 15), counter: shift.counter, eta: uni ? null : addMin(now(), 15), items: [{ qty: 1, name: 'Bún bò Huế' }, { qty: 1, name: 'Sữa tươi ít đường' }] }]));
+      preSeq[1](preSeq[0] + 1); say('Đơn hàng mới ' + code, 'clock');
+    }
+    function incomingCash() {
+      var code = 'K-0' + (160 + preSeq[0] % 40);
+      pre[1](pre[0].concat([{ code: code, source: 'kiosk', buyer: 'Trần Minh Khôi · HS 8A3 · ví thiếu', status: 'cash', pickupAt: addMin(now(), 10), counter: shift.counter, cashDue: 8000, cashNote: 'Ví thiếu — thu thêm tiền mặt', items: [{ qty: 1, name: 'Cơm gà xối mỡ' }, { qty: 1, name: 'Sữa chua' }] }]));
+      preSeq[1](preSeq[0] + 1); say('Đơn ' + code + ' cần thu tiền mặt', 'cash');
+    }
+    function incomingClass() {
+      var code = 'LOP-' + ['6A1', '9B2', '11C3'][preSeq[0] % 3];
+      pre[1](pre[0].concat([{ code: code + '-' + preSeq[0], source: 'class', buyer: 'Lớp ' + code.slice(4) + ' — GVCN', status: 'new', pickupAt: addMin(now(), 30), counter: '3', items: [{ qty: 32, name: 'Suất trưa tiêu chuẩn' }] }]));
+      preSeq[1](preSeq[0] + 1); say('Suất tập thể mới cho lớp ' + code.slice(4), 'users');
+    }
+    function refund(id, amt, reason, method, pending, bonusPart) {
+      orders[1](orders[0].map(function (o) { return o.id === id ? Object.assign({}, o, { refunded: amt, refundReason: reason, refundMethod: method, refundPending: pending }) : o; }));
+      if (!pending && method === 'wallet') { var o = orders[0].filter(function (x) { return x.id === id; })[0]; if (o.buyerId && BUYERS[o.buyerId]) { var b = Object.assign({}, BUYERS[o.buyerId]); b.bonus += bonusPart; b.real += amt - bonusPart; BUYERS[o.buyerId] = b; } }
+      say(pending ? 'Đã gửi yêu cầu hoàn ' + fmt(amt) + ' cho quản lý duyệt' : 'Đã hoàn ' + fmt(amt) + ' về ' + (method === 'wallet' ? 'ví' : method === 'cash' ? 'tiền mặt' : 'chuyển khoản') + ' · ' + id, 'undo');
+    }
+
+    var tabs = [['sell', 'Bán hàng', 'cash'], ['pre', 'Đơn hàng', 'bag'], ['refund', 'Đơn hoàn thành', 'doc'], ['stock', 'Nhập hàng', 'store'], ['close', 'Chốt ca', 'receipt']];
+    var preCount = pre[0].filter(function (t) { return t.status === 'new' || t.status === 'cash'; }).length;
+    var main;
+    if (view[0] === 'sell') main = h(Sell, { app: app, add: add, qty: setQty, clear: function () { cart[1]([]); cancels[1](cancels[0] + 1); say('Đã hủy đơn đang tạo', 'x'); }, setBuyer: setBuyer, pay: function (m) { dialog[1](m); } });
+    else if (view[0] === 'pre') main = h(Preorders, { list: pre[0], next: nextPre, incoming: incoming, incomingCash: incomingCash, incomingClass: incomingClass });
+    else if (view[0] === 'stock') main = h(Receive, { shift: shift, say: say, seq: rcSeq[0], receipts: receipts[0], saveReceipt: function (r) {
+      var id = 'PN-' + String(rcSeq[0]).padStart(4, '0');
+      receipts[1](receipts[0].concat([Object.assign({ id: id, time: now(), staff: shift.staff }, r)])); rcSeq[1](rcSeq[0] + 1); menuVer[1](menuVer[0] + 1);
+      say('Đã lưu ' + id + ' · cộng ' + r.rows.reduce(function (s, x) { return s + x.qty; }, 0) + ' phần vào tồn kho · ' + fmt(r.total), 'check');
+    } });
+    else if (view[0] === 'refund') main = h(Refund, { orders: orders[0], shift: shift, refund: refund });
+    else main = h(Close, { receipts: receipts[0], pre: pre[0], goStock: function () { view[1]('stock'); }, goOrders: function () { view[1]('pre'); }, orders: orders[0], shift: shift, cancels: cancels[0], offlinePending: queue[0].length, restart: function () { S[1](null); view[1]('sell'); orders[1](SEED_ORDERS); cart[1]([]); queue[1]([]); offline[1](false); } });
+
+    return h('div', { className: 'cp-app pt-app' },
+      h(C.TopBar, {
+        canteen: shift.canteen, counter: shift.counter, shift: shift.shift, staff: shift.staff, online: !offline[0], pending: queue[0].length,
+        right: h('div', { className: 'pt-nav', role: 'tablist' }, tabs.map(function (t) {
+          return h('button', { key: t[0], type: 'button', role: 'tab', 'aria-selected': String(view[0] === t[0]), className: 'pt-nav-btn', onClick: function () { view[1](t[0]); } }, h(C.Icon, { name: t[2], size: 18 }), t[1], t[0] === 'pre' && preCount ? h('span', { className: 'pt-count' }, preCount) : null);
+        }))
+      }),
+      syncing[0] ? h(C.OfflineBanner, { syncing: true, done: syncing[0].done, pending: syncing[0].total }) : offline[0] ? h(C.OfflineBanner, { pending: queue[0].length, walletLimit: OFFLINE_WALLET_LIMIT, qrPending: orders[0].filter(function (o) { return o.offline && o.pay.qrPending; }).length }) : null,
+      h('div', { className: 'pt-main' }, main),
+      dialog[0] ? h(PayDialog, {
+        key: dialog[0], app: app, mode: dialog[0], total: pendingWallet[0] ? pendingWallet[0].short : total, orderCode: orderCode, close: function () { dialog[1](null); pendingWallet[1](null); },
+        done: function (pay, msg, icon) { if (pendingWallet[0]) pay = Object.assign({}, pendingWallet[0].pay, pay); finish(pay, msg, icon); },
+        flag: flag,
+        walletThenQr: function (walletPay, short) { pendingWallet[1]({ pay: walletPay, short: short }); dialog[1]('qr'); }
+      }) : null,
+      receipt[0] ? h(Receipt, { r: receipt[0], shift: shift, say: say, close: function () { receipt[1](null); } }) : null,
+      h(Toast, { toast: toast[0] }));
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+})();
+
+</script>

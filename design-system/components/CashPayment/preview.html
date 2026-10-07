@@ -1,0 +1,12 @@
+<!-- @dsCard group="Thanh toán" height=640 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>CashPayment</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{width:420}},h(C.CashPayment,{total:83700,given:100000,shift:'Sáng 05/10',staff:'NV Lan'})));
+</script>
+</body>
+</html>

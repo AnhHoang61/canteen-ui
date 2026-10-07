@@ -1,0 +1,47 @@
+/* Canteen POS — design tokens (sinh từ design-system/tokens.json). Giao diện dùng theme sáng. */
+:root {
+  --surface: #f4f5f7;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f4f5f7;
+  --line: #eceef1;
+  --line-strong: #8e939b;
+  --ink: #1d1f24;
+  --ink-muted: #60656d;
+  --brand: #1d1f24;
+  --on-brand: #ffffff;
+  --brand-soft: #e9f1fd;
+  --accent: #f5a623;
+  --on-accent: #1d1f24;
+  --accent-soft: #fdf3e1;
+  --accent-ink: #946200;
+  --success: #0f7a5c;
+  --success-soft: #e3f5ee;
+  --warning: #9a4f00;
+  --warning-soft: #fdeedb;
+  --danger: #c0281b;
+  --danger-soft: #fde8e6;
+  --info: #1a62c2;
+  --info-soft: #e9f1fd;
+  --focus: #1a62c2;
+  --qr-ink: #111111;
+  --qr-ground: #ffffff;
+  --shadow-1: none;
+  --shadow-2: 0 8px 24px rgba(29,31,36,0.12);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --tap-min: 48px;
+  --tap-lg: 56px;
+  --cart-width: 400px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  --font-sans: Roboto, "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+body { background: var(--surface); color: var(--ink); }

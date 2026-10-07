@@ -1,0 +1,15 @@
+<!-- @dsCard group="Bán hàng" height=560 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>OrderCart</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{width:400,height:540,display:'flex'}},
+  h(C.OrderCart,{orderCode:'DH-0412',staff:'Lan',counter:'2',createdAt:'10:42 · 05/10',lines:[{name:'Cơm gà xối mỡ',price:35000,qty:2},{name:'Trà đào',price:15000,qty:1,note:'ít đá'},{name:'Sữa chua',price:8000,qty:1}],discount:{label:'KM combo trưa −10%',amount:9300}},
+    h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}},h(C.Button,{variant:'secondary',icon:'cash',size:'lg'},'Tiền mặt'),h(C.Button,{variant:'secondary',icon:'qr',size:'lg'},'QR')),
+    h(C.Button,{size:'lg',block:true,icon:'wallet'},'Trừ ví người mua'))));
+</script>
+</body>
+</html>

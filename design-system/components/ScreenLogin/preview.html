@@ -1,0 +1,51 @@
+<!-- @dsCard group="Màn hình" height=800 width=1280 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>ScreenLogin</title></head>
+<body>
+<div id="root" class="cp" style="padding:0"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+var MENU=[
+ {code:'C01',name:'Cơm gà xối mỡ',price:35000,cat:'com'},{code:'C02',name:'Cơm rang dưa bò',price:38000,cat:'com'},
+ {code:'C05',name:'Cơm sườn nướng',price:38000,cat:'com',status:'soldout'},{code:'B03',name:'Bún bò Huế',price:40000,promo:'−10%'},
+ {code:'B04',name:'Phở gà',price:35000},{code:'A07',name:'Bánh mì trứng',price:15000,status:'low',stockLeft:3},
+ {code:'A09',name:'Khoai tây chiên',price:20000,student:'blocked'},{code:'N01',name:'Trà đào',price:15000},
+ {code:'N02',name:'Coca-Cola lon',price:12000,student:'blocked'},{code:'N05',name:'Sữa tươi ít đường',price:10000},
+ {code:'T01',name:'Sữa chua',price:8000},{code:'T03',name:'Hoa quả dầm',price:20000}];
+var TABS=[{id:'all',label:'Tất cả',count:42},{id:'com',label:'Cơm & món chính',count:12},{id:'bun',label:'Bún / Phở',count:6},{id:'an',label:'Ăn vặt',count:9},{id:'nuoc',label:'Đồ uống',count:11}];
+var TOP={canteen:'Canteen A — Nhà ăn chính',counter:'2',shift:'Sáng 06:30–10:30',staff:'Nguyễn Thị Lan'};
+function grid(student, qty){ qty=qty||{}; return h('div',{className:'cp-menu-grid',style:{overflow:'auto',paddingTop:8,paddingRight:8}}, MENU.map(function(m){
+  var st = m.status || (student && m.student) || 'available';
+  return h(C.MenuItemCard,Object.assign({key:m.code},m,{status:st,qty:qty[m.code]||0,blockedReason:'Chặn với HS'}));})); }
+function mount(x){ ReactDOM.createRoot(document.getElementById('root')).render(x); }
+function app(){ return h.apply(null,['div',{className:'cp-app',style:{height:800,minHeight:0,position:'relative'}}].concat([].slice.call(arguments))); }
+
+function step(n, title, body){ return h('div',{style:{display:'grid',gridTemplateColumns:'36px 1fr',gap:16}},
+  h('span',{style:{width:36,height:36,borderRadius:999,background:'var(--info-soft)',color:'var(--info)',display:'grid',placeItems:'center',font:'700 15px/1 var(--font-sans)'}},n),
+  h('div',{className:'cp-stack'},h('div',{className:'cp-h2'},title),body)); }
+mount(h('div',{className:'cp-app',style:{height:800,minHeight:0,display:'grid',gridTemplateColumns:'440px 1fr'}},
+  h('aside',{style:{background:'var(--brand)',color:'var(--on-brand)',padding:48,display:'flex',flexDirection:'column',justifyContent:'space-between'}},
+    h('div',{style:{font:'700 22px/28px var(--font-sans)'}},'Canteen ',h('span',{style:{fontWeight:400}},'POS')),
+    h('div',null,
+      h('div',{className:'cp-num',style:{fontSize:72,lineHeight:'76px',fontWeight:700}},'06:24'),
+      h('div',{style:{font:'500 16px/24px var(--font-sans)',opacity:.9}},'Thứ Hai, 05/10/2026'),
+      h('div',{style:{marginTop:24,font:'400 14px/20px var(--font-sans)',opacity:.85}},'Thiết bị: POS-A-02 · Trường THCS & THPT Giảng Võ'))),
+  h('main',{style:{padding:'48px 64px',overflow:'auto'}},
+    h('div',{style:{maxWidth:560,display:'grid',gap:28}},
+      h('div',null,h('h1',{className:'cp-h'},'Đăng nhập & mở ca'),h('p',{className:'cp-muted',style:{margin:'4px 0 0'}},'Dùng tài khoản nhân viên được Canteen cấp.')),
+      step(1,'Tài khoản nhân viên', h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}},
+        h(C.Field,{label:'Mã nhân viên',icon:'user',defaultValue:'NV0123'}),
+        h(C.Field,{label:'Mật khẩu / PIN',icon:'lock',type:'password',defaultValue:'123456'}))),
+      step(2,'Canteen & quầy bán', h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}},
+        h(C.Field,{label:'Canteen',as:'select',options:['Canteen A — Nhà ăn chính','Canteen B — Khu ký túc']}),
+        h(C.Field,{label:'Quầy',as:'select',options:['Quầy 2 — Cơm & món chính','Quầy 1 — Đồ uống','Quầy 3 — Suất tập thể']}))),
+      step(3,'Mở ca', h('div',{className:'cp-stack'},
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,alignItems:'start'}},
+          h(C.Field,{label:'Ca làm việc',as:'select',options:['Ca sáng 06:30–10:30','Ca trưa 10:30–14:00','Ca chiều 14:00–18:00']}),
+          h(C.Field,{label:'Tiền mặt đầu ca',numeric:true,defaultValue:'1.000.000',suffix:'₫',hint:'Đếm két và nhập đúng số thực tế'})),
+        h(C.InlineNote,{tone:'info'},'Hệ thống ghi nhận NV0123 · Quầy 2 · 06:24 05/10 làm mốc mở ca.'))),
+      h('div',{style:{paddingLeft:52}},h(C.Button,{size:'lg',icon:'check'},'Mở ca và bắt đầu bán'))))))
+</script>
+</body>
+</html>

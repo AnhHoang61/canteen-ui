@@ -1,0 +1,17 @@
+<!-- @dsCard group="Bán hàng" height=170 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>MenuItemCard</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'cp-menu-grid',style:{paddingTop:8}},
+  h(C.MenuItemCard,{code:'C01',name:'Cơm gà xối mỡ',price:35000,qty:2}),
+  h(C.MenuItemCard,{code:'B03',name:'Bún bò Huế',price:40000,promo:'−10%'}),
+  h(C.MenuItemCard,{code:'A07',name:'Bánh mì trứng',price:15000,status:'low',stockLeft:3}),
+  h(C.MenuItemCard,{code:'N02',name:'Coca-Cola lon',price:12000,status:'blocked',blockedReason:'Chặn với HS'}),
+  h(C.MenuItemCard,{code:'C05',name:'Cơm sườn nướng',price:38000,status:'soldout'})));
+</script>
+</body>
+</html>

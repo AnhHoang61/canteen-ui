@@ -1,0 +1,23 @@
+<!-- @dsCard group="Nền tảng" height=140 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>Button</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'cp-stack'},
+  h('div',{className:'cp-row'},
+    h(C.Button,{icon:'check'},'Thanh toán'),
+    h(C.Button,{variant:'secondary',icon:'user'},'Khách lẻ'),
+    h(C.Button,{variant:'accent',icon:'tag'},'Áp KM'),
+    h(C.Button,{variant:'ghost'},'Hủy bỏ'),
+    h(C.Button,{variant:'danger',icon:'undo'},'Hoàn/Hủy đơn'),
+    h(C.Button,{disabled:true},'Không đủ quyền')),
+  h('div',{className:'cp-row'},
+    h(C.Button,{size:'lg',icon:'cash'},'Tiền mặt'),
+    h(C.Button,{size:'lg',variant:'secondary',icon:'qr'},'QR ngân hàng'),
+    h(C.Button,{size:'sm',variant:'secondary'},'Bắt đầu chuẩn bị'))));
+</script>
+</body>
+</html>

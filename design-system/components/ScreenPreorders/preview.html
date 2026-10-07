@@ -1,0 +1,49 @@
+<!-- @dsCard group="Màn hình" height=800 width=1280 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>ScreenPreorders</title></head>
+<body>
+<div id="root" class="cp" style="padding:0"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+var MENU=[
+ {code:'C01',name:'Cơm gà xối mỡ',price:35000,cat:'com'},{code:'C02',name:'Cơm rang dưa bò',price:38000,cat:'com'},
+ {code:'C05',name:'Cơm sườn nướng',price:38000,cat:'com',status:'soldout'},{code:'B03',name:'Bún bò Huế',price:40000,promo:'−10%'},
+ {code:'B04',name:'Phở gà',price:35000},{code:'A07',name:'Bánh mì trứng',price:15000,status:'low',stockLeft:3},
+ {code:'A09',name:'Khoai tây chiên',price:20000,student:'blocked'},{code:'N01',name:'Trà đào',price:15000},
+ {code:'N02',name:'Coca-Cola lon',price:12000,student:'blocked'},{code:'N05',name:'Sữa tươi ít đường',price:10000},
+ {code:'T01',name:'Sữa chua',price:8000},{code:'T03',name:'Hoa quả dầm',price:20000}];
+var TABS=[{id:'all',label:'Tất cả',count:42},{id:'com',label:'Cơm & món chính',count:12},{id:'bun',label:'Bún / Phở',count:6},{id:'an',label:'Ăn vặt',count:9},{id:'nuoc',label:'Đồ uống',count:11}];
+var TOP={canteen:'Canteen A — Nhà ăn chính',counter:'2',shift:'Sáng 06:30–10:30',staff:'Nguyễn Thị Lan'};
+function grid(student, qty){ qty=qty||{}; return h('div',{className:'cp-menu-grid',style:{overflow:'auto',paddingTop:8,paddingRight:8}}, MENU.map(function(m){
+  var st = m.status || (student && m.student) || 'available';
+  return h(C.MenuItemCard,Object.assign({key:m.code},m,{status:st,qty:qty[m.code]||0,blockedReason:'Chặn với HS'}));})); }
+function mount(x){ ReactDOM.createRoot(document.getElementById('root')).render(x); }
+function app(){ return h.apply(null,['div',{className:'cp-app',style:{height:800,minHeight:0,position:'relative'}}].concat([].slice.call(arguments))); }
+
+var T=[
+ {code:'APP-1191',buyer:'Vũ Minh Anh · 9A2',status:'new',pickupAt:'11:45',counter:'2',eta:'11:45',items:[{qty:1,name:'Phở gà'},{qty:1,name:'Trà đào'}]},
+ {code:'APP-1187',buyer:'Lê Gia Bảo · SV K20',status:'new',pickupAt:'11:30',counter:'2',eta:'+30′ → 11:52',items:[{qty:1,name:'Cơm sườn nướng'},{qty:1,name:'Nước cam'}]},
+ {code:'LOP-10A2',source:'class',buyer:'Lớp 10A2 — GVCN Đỗ Thảo',status:'preparing',pickupAt:'11:00',counter:'3',items:[{qty:38,name:'Suất trưa tiêu chuẩn'},{qty:2,name:'Suất chay'}]},
+ {code:'APP-1183',buyer:'Nguyễn Hải Yến · SV K19',status:'preparing',pickupAt:'11:15',counter:'1',eta:'+30′ → 11:40',items:[{qty:2,name:'Bún chả'}]},
+ {code:'APP-1176',buyer:'Hoàng Đức · 12C1',status:'ready',pickupAt:'10:50',counter:'2',items:[{qty:1,name:'Cơm gà xối mỡ'}]},
+ {code:'LOP-7B1',source:'class',buyer:'Lớp 7B1 — GVCN Ngô Lan',status:'ready',pickupAt:'10:45',counter:'3',items:[{qty:35,name:'Suất trưa tiêu chuẩn'}]}];
+function col(title, st, tone){ var list=T.filter(function(t){return t.status===st;});
+  return h('div',{style:{display:'flex',flexDirection:'column',gap:12,minHeight:0}},
+    h('div',{className:'cp-row',style:{justifyContent:'space-between'}},h('span',{className:'cp-h2'},title),h(C.StatusBadge,{tone:tone},list.length+' đơn')),
+    h('div',{style:{display:'grid',gap:12,overflow:'auto',alignContent:'start'}},list.map(function(t){return h(C.PreorderTicket,Object.assign({key:t.code},t));}))); }
+function rule(range, add, on){ return h('div',{style:{padding:'8px 12px',borderRadius:'var(--radius-md)',background:on?'var(--brand)':'var(--surface-sunken)',color:on?'var(--on-brand)':'var(--ink)',textAlign:'center'}},
+  h('div',{style:{font:'600 12px/16px var(--font-sans)',opacity:on?1:.8}},range),h('div',{className:'cp-num',style:{fontSize:18,fontWeight:600}},add)); }
+mount(app(h(C.TopBar,TOP),
+  h('div',{style:{flex:1,display:'flex',flexDirection:'column',gap:16,padding:16,minHeight:0}},
+    h('div',{className:'cp-panel',style:{display:'flex',gap:24,alignItems:'center',flexWrap:'wrap'}},
+      h('div',{style:{flex:1,minWidth:280}},
+        h('h1',{className:'cp-h'},'Đơn đặt trước'),
+        h('div',{className:'cp-muted',style:{fontSize:14}},'Đang chờ: ',h('strong',{className:'cp-num',style:{color:'var(--ink)'}},'42 đơn'),' · Thời gian cộng thêm cho sinh viên (cấp Đại học) theo tải hiện tại')),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,120px)',gap:8}},rule('≤ 30 đơn','+20′'),rule('30 – 50 đơn','+30′',true),rule('≥ 50 đơn','+35′')),
+      h(C.CategoryTabs,{items:[{id:'all',label:'Tất cả',count:42},{id:'app',label:'Từ app',count:34},{id:'class',label:'Suất tập thể',count:8}]})),
+    h('div',{style:{flex:1,display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,minHeight:0}},
+      col('Mới nhận','new','info'),col('Đang chuẩn bị','preparing','warning'),col('Sẵn sàng giao','ready','success')))))
+</script>
+</body>
+</html>

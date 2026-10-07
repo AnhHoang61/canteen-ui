@@ -1,0 +1,45 @@
+<!-- @dsCard group="Màn hình" height=800 width=1280 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>ScreenOffline</title></head>
+<body>
+<div id="root" class="cp" style="padding:0"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+var MENU=[
+ {code:'C01',name:'Cơm gà xối mỡ',price:35000,cat:'com'},{code:'C02',name:'Cơm rang dưa bò',price:38000,cat:'com'},
+ {code:'C05',name:'Cơm sườn nướng',price:38000,cat:'com',status:'soldout'},{code:'B03',name:'Bún bò Huế',price:40000,promo:'−10%'},
+ {code:'B04',name:'Phở gà',price:35000},{code:'A07',name:'Bánh mì trứng',price:15000,status:'low',stockLeft:3},
+ {code:'A09',name:'Khoai tây chiên',price:20000,student:'blocked'},{code:'N01',name:'Trà đào',price:15000},
+ {code:'N02',name:'Coca-Cola lon',price:12000,student:'blocked'},{code:'N05',name:'Sữa tươi ít đường',price:10000},
+ {code:'T01',name:'Sữa chua',price:8000},{code:'T03',name:'Hoa quả dầm',price:20000}];
+var TABS=[{id:'all',label:'Tất cả',count:42},{id:'com',label:'Cơm & món chính',count:12},{id:'bun',label:'Bún / Phở',count:6},{id:'an',label:'Ăn vặt',count:9},{id:'nuoc',label:'Đồ uống',count:11}];
+var TOP={canteen:'Canteen A — Nhà ăn chính',counter:'2',shift:'Sáng 06:30–10:30',staff:'Nguyễn Thị Lan'};
+function grid(student, qty){ qty=qty||{}; return h('div',{className:'cp-menu-grid',style:{overflow:'auto',paddingTop:8,paddingRight:8}}, MENU.map(function(m){
+  var st = m.status || (student && m.student) || 'available';
+  return h(C.MenuItemCard,Object.assign({key:m.code},m,{status:st,qty:qty[m.code]||0,blockedReason:'Chặn với HS'}));})); }
+function mount(x){ ReactDOM.createRoot(document.getElementById('root')).render(x); }
+function app(){ return h.apply(null,['div',{className:'cp-app',style:{height:800,minHeight:0,position:'relative'}}].concat([].slice.call(arguments))); }
+
+var LINES=[{name:'Bánh mì trứng',price:15000,qty:2},{name:'Sữa tươi ít đường',price:10000,qty:1}];
+function q(code, what, amt, tone, st){ return h('tr',null,h('td',{className:'cp-num'},code),h('td',null,what),h('td',{className:'r'},h(C.Money,{value:amt})),h('td',{className:'r'},h(C.StatusBadge,{tone:tone},st))); }
+mount(app(h(C.TopBar,Object.assign({},TOP,{online:false,pending:6})),
+  h(C.OfflineBanner,{pending:6,qrPending:1,walletLimit:30000}),
+  h('div',{className:'cp-pos'},
+    h('div',{className:'cp-pos-main'},
+      h(C.CategoryTabs,{items:TABS}),
+      h('div',{style:{flex:1,minHeight:0,overflow:'hidden'}},grid(false,{A07:2,N05:1})),
+      h('div',{className:'cp-panel',style:{padding:12}},
+        h('div',{className:'cp-row',style:{justifyContent:'space-between',marginBottom:8}},h('span',{className:'cp-h2'},'Hàng đợi đồng bộ'),h('span',{className:'cp-muted',style:{fontSize:13}},'Lưu cục bộ trên thiết bị POS-A-02')),
+        h('table',{className:'cp-table'},h('tbody',null,
+          q('OFF-0007','Tiền mặt · khách lẻ',35000,'warning','Chờ đồng bộ'),
+          q('OFF-0006','Ví offline · HS-208317',28000,'warning','Chờ đồng bộ'),
+          q('OFF-0005','QR · khách lẻ',42000,'danger','Chờ xác minh QR'))))),
+    h('div',{className:'cp-pos-side'},
+      h(C.BuyerCard,{role:'guest'}),
+      h(C.OrderCart,{orderCode:'OFF-0008',staff:'Lan',counter:'2',createdAt:'10:58 · 05/10 (giờ thiết bị)',lines:LINES,badge:h(C.StatusBadge,{tone:'warning',icon:'wifiOff'},'Offline')},
+        h(C.Button,{size:'lg',block:true,icon:'cash'},'Tiền mặt'),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}},h(C.Button,{variant:'secondary',icon:'wallet'},'Ví ≤ 30k'),h(C.Button,{variant:'secondary',icon:'qr'},'QR (chờ xác minh)')))))))
+</script>
+</body>
+</html>

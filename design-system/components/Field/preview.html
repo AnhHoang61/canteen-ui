@@ -1,0 +1,15 @@
+<!-- @dsCard group="Nền tảng" height=200 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>Field</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:16}},
+  h(C.Field,{label:'Mã nhân viên',icon:'user',placeholder:'VD: NV0123'}),
+  h(C.Field,{label:'Tiền mặt đầu ca',numeric:true,defaultValue:'1.000.000',suffix:'₫',hint:'Đếm két trước khi mở ca'}),
+  h(C.Field,{label:'Lý do hủy',as:'select',options:['Khách đổi ý','Nhập sai món','Món hết sau khi tạo đơn','Khác'],error:'Bắt buộc chọn lý do'})));
+</script>
+</body>
+</html>

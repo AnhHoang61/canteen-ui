@@ -1,0 +1,14 @@
+<!-- @dsCard group="Khung ứng dụng" height=110 width=1200 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>OfflineBanner</title></head>
+<body>
+<div id="root" class="cp" style="padding:0"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',null,
+  h(C.OfflineBanner,{pending:6,qrPending:1,walletLimit:30000}),
+  h(C.OfflineBanner,{syncing:true,done:4,pending:6,conflicts:1})));
+</script>
+</body>
+</html>

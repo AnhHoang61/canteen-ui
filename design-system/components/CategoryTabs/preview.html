@@ -1,0 +1,12 @@
+<!-- @dsCard group="Bán hàng" height=80 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>CategoryTabs</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h(C.CategoryTabs,{items:[{id:'all',label:'Tất cả',count:42},{id:'com',label:'Cơm & món chính',count:12},{id:'bun',label:'Bún / Phở',count:6},{id:'an',label:'Ăn vặt',count:9},{id:'nuoc',label:'Đồ uống',count:11},{id:'trang',label:'Tráng miệng',count:4}]}));
+</script>
+</body>
+</html>

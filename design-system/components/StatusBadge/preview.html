@@ -1,0 +1,23 @@
+<!-- @dsCard group="Nền tảng" height=96 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>StatusBadge</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'cp-stack'},
+  h('div',{className:'cp-row'},
+    h(C.StatusBadge,{tone:'success'},'Thành công'),
+    h(C.StatusBadge,{tone:'warning'},'Chờ thanh toán'),
+    h(C.StatusBadge,{tone:'danger'},'Cần kiểm tra'),
+    h(C.StatusBadge,{tone:'info'},'Đang chuẩn bị'),
+    h(C.StatusBadge,{tone:'neutral',icon:'ban'},'Hết món')),
+  h('div',{className:'cp-row'},
+    h(C.StatusBadge,{tone:'warning',icon:'wifiOff'},'Offline · 6 chờ đồng bộ'),
+    h(C.StatusBadge,{tone:'danger',icon:'lock'},'Nước ngọt có ga'),
+    h(C.StatusBadge,{tone:'accent',icon:'tag'},'−10%'),
+    h(C.StatusBadge,{tone:'brand',icon:'users'},'Suất tập thể'))));
+</script>
+</body>
+</html>

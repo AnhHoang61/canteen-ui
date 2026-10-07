@@ -1,0 +1,20 @@
+<!-- @dsCard group="Danh sách" height=420 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>ListRow</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{maxWidth:520}},
+  h(C.SectionLabel,null,'Ca làm việc'),
+  h('div',{className:'cp-card'},
+    h(C.ListRow,{title:'Ca',value:'Ca sáng 06:30–10:30',chevron:true}),
+    h(C.ListRow,{title:'Thời điểm mở ca',value:'06:24 · 05/10/2026'})),
+  h(C.SectionLabel,{help:true,onEdit:function(){}},'Quyền của nhân viên'),
+  h('div',{className:'cp-card'},
+    h(C.ListRow,{icon:'cash',title:'Bán hàng & thu tiền',value:'Được phép: Tiền mặt, QR, Trừ ví',note:'Hoàn tiền mặt > 50.000 ₫ cần quản lý duyệt'}),
+    h(C.ListRow,{icon:'tag',title:'Khuyến mại',value:'Được phép: Áp KM có sẵn'}))));
+</script>
+</body>
+</html>

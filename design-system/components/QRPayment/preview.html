@@ -1,0 +1,14 @@
+<!-- @dsCard group="Thanh toán" height=560 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>QRPayment</title></head>
+<body>
+<div id="root" class="cp" style="padding:16px"></div>
+<script>
+var C = window.CanteenPOS, h = React.createElement;
+ReactDOM.createRoot(document.getElementById('root')).render(h('div',{className:'cp-stack',style:{gap:24}},
+  h(C.QRPayment,{total:83700,orderCode:'DH-0412',state:'pending',elapsed:'00:42'}),
+  h(C.QRPayment,{total:50000,orderCode:'DH-0398',state:'check',issue:'Nhận 45.000 ₫ — lệch 5.000 ₫ so với đơn. Không xác nhận; chuyển tra soát.'})));
+</script>
+</body>
+</html>
