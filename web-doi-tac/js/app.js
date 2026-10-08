@@ -7,13 +7,21 @@
 
   // --- Common Dialog ---
   function Dialog(props) {
-    if (!props.isOpen) return null;
+    var isOpen = props.isOpen, onClose = props.onClose;
+    // Esc đóng hộp thoại
+    useEffect(function() {
+      if (!isOpen) return;
+      function onKey(e) { if (e.key === 'Escape' && onClose) onClose(); }
+      document.addEventListener('keydown', onKey);
+      return function() { document.removeEventListener('keydown', onKey); };
+    }, [isOpen, onClose]);
+    if (!isOpen) return null;
     return window.ReactDOM.createPortal(
       h('div', { className: 'wd-scrim', style: { background: 'rgba(29,31,36,0.6)', inset: 0, display: 'grid', placeItems: 'center', margin: 0, height: '100vh', boxSizing: 'border-box' } },
-        h('div', { className: cx('cp-panel wd-dialog', props.className), style: { background: 'var(--surface-raised)', borderRadius: 'var(--radius-xl)', display: 'flex', flexDirection: 'column' } },
+        h('div', { className: cx('cp-panel wd-dialog', props.className), role: 'dialog', 'aria-modal': 'true', 'aria-label': typeof props.title === 'string' ? props.title : undefined, style: { background: 'var(--surface-raised)', borderRadius: 'var(--radius-xl)', display: 'flex', flexDirection: 'column' } },
           h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', padding: '16px 24px', borderBottom: '1px solid var(--line)', flex: '0 0 auto' } }, 
              h('h2', { style: { margin: 0, fontSize: 18, lineHeight: 1.3 } }, props.title), 
-             h('button', { className: 'wd-icon-btn', style: { flex: '0 0 auto' }, onClick: props.onClose }, h(C.Icon, { name: 'x' }))
+             h('button', { className: 'wd-icon-btn', style: { flex: '0 0 auto' }, onClick: props.onClose, 'aria-label': 'Đóng' }, h(C.Icon, { name: 'x' }))
           ),
           h('div', { style: { padding: 'var(--space-4)', overflowY: 'auto', flex: '1 1 auto' } }, props.children)
         )
@@ -25,165 +33,111 @@
   // --- ReportsTab ---
   function ReportsTab(props) {
     var data = props.data;
-    var [cat, setCat] = useState('overview');
     
-    // Mock Data for KPIs
-    var totalRev = 15420000;
-    var totalOrders = 342;
-    var activeUsers = data.accounts ? data.accounts.filter(function(a){return a.status === 'active'}).length : 120;
-    
-    // Mock Data for Cashflow
-    var topUpTotal = 25000000;
-    var usageTotal = 13200000;
-    var refundTotal = 500000;
-    var balanceTotal = 11300000;
-
-    // P&L Mock Data
-    var pnlRev = 15420000;
-    var pnlDiscount = 1200000;
-    var pnlNetRev = pnlRev - pnlDiscount;
-    var pnlCogs = 6500000;
-    var pnlGross = pnlNetRev - pnlCogs;
-    var pnlExpenses = 3200000;
-    var pnlNetProfit = pnlGross - pnlExpenses;
-
-    function renderOverview() {
-      return h('div', { className: 'wd-report-content', style: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' } },
-        h('div', { className: 'wd-kpis' },
-          h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'receipt', size:16}), 'Doanh thu (Thực tế)'), h('div', { className: 'wd-kpi-val' }, C.formatVND(totalRev)), h('div', { className: 'wd-delta is-up' }, '▲ 12% so với hôm qua')),
-          h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'bag', size:16}), 'Số đơn hàng'), h('div', { className: 'wd-kpi-val' }, totalOrders), h('div', { className: 'wd-delta is-up' }, '▲ 8% so với hôm qua')),
-          h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'users', size:16}), 'Khách hàng HĐ'), h('div', { className: 'wd-kpi-val' }, activeUsers), h('div', { className: 'wd-delta is-down' }, '▼ 2% so với tuần trước')),
-          h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'card', size:16}), 'Lợi nhuận gộp'), h('div', { className: 'wd-kpi-val' }, C.formatVND(pnlGross)), h('div', { className: 'wd-delta is-up' }, '▲ 5% so với tuần trước'))
+    return h('div', { className: 'wd-dashboard' },
+      h('div', { className: 'wd-dash-head' },
+        h('div', null,
+          h('h2', { className: 'wd-dash-title' }, 'Tổng quan kinh doanh'),
+          h('p', { className: 'wd-dash-sub' }, 'Tất cả 1 canteen · 7 ngày')
         ),
-        h('div', { className: 'cp-panel', style: { padding: 'var(--space-4)' } },
-          h('h3', {style:{margin:'0 0 16px 0', fontSize:16}}, 'Biểu đồ doanh thu theo giờ'),
-          h('div', { className: 'wd-chart' }, 
-            [12, 15, 14, 18, 22, 25, 20, 19].map(function(val, i) {
-              return h('div', { key: i, className: 'wd-bar ' + (i===7?'is-today':'') }, 
-                h('div', { className: 'wd-bar-tip' }, C.formatVND(val*100000)),
-                h('i', { style: { height: Math.round(val/25 * 100) + '%' } }),
-                h('span', null, i + 8 + 'h')
-              );
-            })
+        h('div', { className: 'wd-dash-actions' },
+          h('button', { className: 'wd-btn-outline' }, h(C.Icon, {name:'download', size:16}), ' Xuất Excel'),
+          h('button', { className: 'wd-btn-outline' }, h(C.Icon, {name:'file-text', size:16}), ' Xuất PDF')
+        )
+      ),
+      h('div', { className: 'wd-dash-kpis' },
+        h('div', { className: 'wd-dash-kpi' },
+          h('label', null, h(C.Icon, {name:'bar-chart', size:14}), ' Doanh thu'),
+          h('div', { className: 'wd-kpi-val' }, '3.710.000 đ'),
+          h('div', { className: 'wd-kpi-sub' }, 'Kỳ trước chưa có doanh thu')
+        ),
+        h('div', { className: 'wd-dash-kpi' },
+          h('label', null, h(C.Icon, {name:'doc', size:14}), ' Số đơn'),
+          h('div', { className: 'wd-kpi-val' }, '76'),
+          h('div', { className: 'wd-kpi-sub' }, 'TB 48.800 đ / đơn')
+        ),
+        h('div', { className: 'wd-dash-kpi' },
+          h('label', null, h(C.Icon, {name:'cash', size:14}), ' Tiền nạp vào ví'),
+          h('div', { className: 'wd-kpi-val' }, '3.686.000 đ'),
+          h('div', { className: 'wd-kpi-sub' }, 'Hoàn 180.000 đ')
+        ),
+        h('div', { className: 'wd-dash-kpi' },
+          h('label', null, h(C.Icon, {name:'percent', size:14}), ' % Lợi nhuận gộp (ước tính)'),
+          h('div', { className: 'wd-kpi-val' }, '3.334.000 đ'),
+          h('div', { className: 'wd-kpi-sub' }, 'Biên 89.9%')
+        )
+      ),
+      h('div', { className: 'wd-dash-grid-2' },
+        h('div', { className: 'wd-dash-panel' },
+          h('h3', null, 'Doanh thu theo ngày'),
+          h('p', { className: 'wd-dash-sub' }, 'Rê chuột để xem chi tiết'),
+          h('div', { className: 'wd-mock-bar-chart' },
+            h('div', { className: 'wd-bar-mock', style: {height: '10px'} }),
+            h('div', { className: 'wd-bar-mock', style: {height: '30px'} }),
+            h('div', { className: 'wd-bar-mock', style: {height: '50px'} }),
+            h('div', { className: 'wd-bar-mock', style: {height: '90px'} }),
+            h('div', { className: 'wd-bar-mock', style: {height: '120px'} }),
+            h('div', { className: 'wd-bar-mock', style: {height: '160px'} })
           )
         ),
-        h('div', { className: 'wd-report-grid', style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-4)' } },
-           h('div', { className: 'cp-panel', style: { padding: 'var(--space-4)' } },
-             h('h3', {style:{margin:'0 0 16px 0', fontSize:16}}, 'Món bán chạy'),
-             h('ul', { className: 'wd-top-list', style: { listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' } },
-               (data.menu || []).slice(0, 5).map(function(m, i) {
-                 return h('li', { key: m.code, style: { display: 'flex', alignItems: 'center', gap: '12px' } },
-                   h('div', { className: 'wd-rank', style: { width: 24, height: 24, background: 'var(--surface-sunken)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' } }, i + 1),
-                   h('div', { className: 'wd-top-name', style: { flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, h('b', null, m.name), h('small', { className: 'cp-muted', style:{display:'block'} }, m.cat)),
-                   h('div', { className: 'r', textAlign: 'right' }, h('strong', null, 50 - i*5))
-                 );
-               })
-             )
-           ),
-           h('div', { className: 'cp-panel', style: { padding: 'var(--space-4)' } },
-             h('h3', {style:{margin:'0 0 16px 0', fontSize:16}}, 'Thanh toán'),
-             h('div', { className: 'wd-pie-legend', style: { display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px'} },
-                h('div', { style: { display: 'flex', justifyContent: 'space-between'} }, h('span', null, '💳 Ví (60%)'), h('strong', null, C.formatVND(totalRev * 0.6))),
-                h('div', { style: { display: 'flex', justifyContent: 'space-between'} }, h('span', null, '💵 Tiền mặt (25%)'), h('strong', null, C.formatVND(totalRev * 0.25))),
-                h('div', { style: { display: 'flex', justifyContent: 'space-between'} }, h('span', null, '📱 QR (15%)'), h('strong', null, C.formatVND(totalRev * 0.15)))
-             )
-           ),
-           h('div', { className: 'cp-panel', style: { padding: 'var(--space-4)' } },
-             h('h3', {style:{margin:'0 0 16px 0', fontSize:16}}, 'Khách hàng'),
-             h('div', { className: 'wd-pie-legend', style: { display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px'} },
-                h('div', { style: { display: 'flex', justifyContent: 'space-between'} }, h('span', null, '🎓 Học sinh (70%)'), h('strong', null, C.formatVND(totalRev * 0.7))),
-                h('div', { style: { display: 'flex', justifyContent: 'space-between'} }, h('span', null, '👨‍🏫 Giáo viên (20%)'), h('strong', null, C.formatVND(totalRev * 0.2))),
-                h('div', { style: { display: 'flex', justifyContent: 'space-between'} }, h('span', null, '🚶 Khách (10%)'), h('strong', null, C.formatVND(totalRev * 0.1)))
+        h('div', { className: 'wd-dash-panel' },
+          h('h3', null, 'Theo phương thức thanh toán'),
+          h('div', { className: 'wd-mock-donut-chart-1' },
+            h('div', { className: 'wd-donut-ring', style:{borderTopColor:'#f59e0b', borderRightColor:'#3b82f6', borderBottomColor:'#3b82f6', borderLeftColor:'#f59e0b'} }),
+            h('div', { className: 'wd-donut-text' }, h('b', null, '3,9 tr'), h('br'), h('small', null, 'Tổng'))
+          ),
+          h('div', { className: 'wd-donut-legend' },
+            h('div', { className: 'wd-dl-item' }, h('span', {style:{background:'#3b82f6'}}), 'Ví (thật + thưởng)', h('b', {style:{float:'right'}}, '52.4%')),
+            h('div', { className: 'wd-dl-item' }, h('span', {style:{background:'#f59e0b'}}), 'Tiền mặt', h('b', {style:{float:'right'}}, '47.6%')),
+            h('div', { className: 'wd-dl-item' }, h('span', {style:{background:'#cbd5e1'}}), 'QR ngân hàng', h('b', {style:{float:'right'}}, '0%'))
+          )
+        )
+      ),
+      h('div', { className: 'wd-dash-grid-3' },
+        h('div', { className: 'wd-dash-panel' },
+          h('h3', null, 'Doanh thu theo giờ'),
+          h('p', { className: 'wd-dash-sub' }, 'Cao điểm 2:00-3:00'),
+          h('div', { className: 'wd-mock-hour-chart' })
+        ),
+        h('div', { className: 'wd-dash-panel' },
+          h('h3', null, 'Món bán chạy'),
+          h('div', { className: 'wd-mock-top-items' },
+            h('div', { className: 'wd-ti' }, h('span', {className:'wd-rank is-1'}, '1'), h('div', {className:'wd-ti-name'}, h('b', null, 'E2E Banh 10k'), h('div', {className:'wd-ti-bar'}, h('i', {style:{width:'90%'}}))), h('div', {className:'wd-ti-val'}, '87 phần')),
+            h('div', { className: 'wd-ti' }, h('span', {className:'wd-rank'}, '2'), h('div', {className:'wd-ti-name'}, h('b', null, 'mỳ bò'), h('div', {className:'wd-ti-bar'}, h('i', {style:{width:'50%'}}))), h('div', {className:'wd-ti-val'}, '20 phần')),
+            h('div', { className: 'wd-ti' }, h('span', {className:'wd-rank'}, '3'), h('div', {className:'wd-ti-name'}, h('b', null, 'mỳ cay'), h('div', {className:'wd-ti-bar'}, h('i', {style:{width:'40%'}}))), h('div', {className:'wd-ti-val'}, '16 phần')),
+            h('div', { className: 'wd-ti' }, h('span', {className:'wd-rank'}, '4'), h('div', {className:'wd-ti-name'}, h('b', null, 'E2E Stock1'), h('div', {className:'wd-ti-bar'}, h('i', {style:{width:'10%'}}))), h('div', {className:'wd-ti-val'}, '4 phần'))
+          )
+        ),
+        h('div', { className: 'wd-dash-panel' },
+          h('h3', null, 'Theo nhóm khách hàng'),
+          h('div', { className: 'wd-mock-customer-donut' },
+            h('div', { className: 'wd-donut-ring', style:{borderTopColor:'#6b7280', borderRightColor:'#3b82f6', borderBottomColor:'#3b82f6', borderLeftColor:'#6b7280'} }),
+            h('div', { className: 'wd-donut-text' }, h('b', null, '3,7 tr'), h('br'), h('small', null, 'Doanh thu'))
+          ),
+          h('div', { className: 'wd-donut-legend' },
+            h('div', { className: 'wd-dl-item' }, h('span', {style:{background:'#3b82f6'}}), 'Học sinh', h('b', {style:{float:'right'}}, '61.5%')),
+            h('div', { className: 'wd-dl-item' }, h('span', {style:{background:'#f59e0b'}}), 'Giáo viên', h('b', {style:{float:'right'}}, '0%')),
+            h('div', { className: 'wd-dl-item' }, h('span', {style:{background:'#6b7280'}}), 'Khách lẻ', h('b', {style:{float:'right'}}, '38.5%'))
+          )
+        )
+      ),
+      h('div', { className: 'wd-dash-panel' },
+        h('div', { className: 'wd-dash-head' },
+          h('h3', null, 'So sánh các canteen'),
+          h('button', { className: 'wd-btn-text' }, 'Báo cáo lãi lỗ ', h(C.Icon, {name:'chevron-right', size:16}))
+        ),
+        h('table', { className: 'wd-dash-table' },
+           h('thead', null, h('tr', null, h('th', null, 'CANTEEN'), h('th', null, 'LOẠI HÌNH'), h('th', null, 'DOANH THU'), h('th', null, 'TỶ TRỌNG'), h('th', null, 'TRẠNG THÁI'))),
+           h('tbody', null,
+             h('tr', null,
+               h('td', null, h('b', {style:{color:'#3b82f6'}}, '● can-a')),
+               h('td', null, 'thcs-a'),
+               h('td', null, h('div', {style:{display:"flex", alignItems:"center", gap:"8px"}}, h(C.Icon, {name:"folder", size:16, style:{color:"#f59e0b"}}), h(C.Icon, {name:"pie-chart", size:16, style:{color:"#10b981"}}), h(C.Icon, {name:"download", size:16, style:{color:"#3b82f6"}}))),
+               h('td', null, h('div', {style:{display:"flex", alignItems:"center", gap:"8px"}}, h('div', {style:{width:"100px", height:"6px", background:"#3b82f6", borderRadius:"3px"}}), '100%')),
+               h('td', null, h('span', { className: 'wd-status-tag is-success' }, h(C.Icon, {name:'check', size:12}), ' Đang mở'))
              )
            )
         )
-      );
-    }
-
-    function renderCashflow() {
-      return h('div', { className: 'wd-report-content', style: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' } },
-        h('div', { className: 'wd-kpis' },
-          h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'cash', size:16}), 'Tổng Tiền Nạp'), h('div', { className: 'wd-kpi-val', style: {color: 'var(--success)'} }, C.formatVND(topUpTotal))),
-          h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'bag', size:16}), 'Tổng Tiền Sử Dụng'), h('div', { className: 'wd-kpi-val', style: {color: 'var(--danger)'} }, C.formatVND(usageTotal))),
-          h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'clock', size:16}), 'Tổng Hoàn Tiền'), h('div', { className: 'wd-kpi-val', style: {color: 'var(--warning)'} }, C.formatVND(refundTotal))),
-          h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'card', size:16}), 'Số Dư Hiện Tại'), h('div', { className: 'wd-kpi-val', style: {color: 'var(--primary)'} }, C.formatVND(balanceTotal)))
-        ),
-        h('div', { className: 'cp-panel' },
-          h('div', { className: 'wd-table-wrap' },
-            h('table', { className: 'wd-table' },
-              h('thead', null, h('tr', null, h('th', null, 'Ngày'), h('th', null, 'Nạp tiền (+)', h('small', {className:'cp-muted', style:{display:'block'}}, 'Ví GV & HS')), h('th', null, 'Sử dụng (-)', h('small', {className:'cp-muted', style:{display:'block'}}, 'Thanh toán đơn')), h('th', null, 'Hoàn tiền (+)', h('small', {className:'cp-muted', style:{display:'block'}}, 'Hoàn số dư')), h('th', null, 'Số dư cuối ngày'))),
-              h('tbody', null,
-                [1,2,3].map(function(d) {
-                  return h('tr', {key: d},
-                    h('td', null, d + '/10/2026'),
-                    h('td', { style: {color:'var(--success)'} }, '+' + C.formatVND(8000000 - d*500000)),
-                    h('td', { style: {color:'var(--danger)'} }, '-' + C.formatVND(4000000 - d*200000)),
-                    h('td', null, '+' + C.formatVND(100000)),
-                    h('td', { style: {fontWeight:'bold'} }, C.formatVND(11300000 + d*1000000))
-                  )
-                })
-              )
-            )
-          )
-        )
-      );
-    }
-
-    function renderPnL() {
-      return h('div', { className: 'wd-report-content', style: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' } },
-        h('div', { className: 'cp-panel' },
-          h('div', { style: { padding: 'var(--space-4)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' } },
-            h('h3', {style:{margin:0}}, 'Báo cáo Kết quả Kinh doanh (P&L)'),
-            h('button', { className: 'cp-btn is-ghost' }, h(C.Icon, {name: 'calendar', size:16}), ' So sánh kỳ trước')
-          ),
-          h('div', { className: 'wd-table-wrap' },
-            h('table', { className: 'wd-table', style: { fontSize: '15px' } },
-              h('thead', null, h('tr', null, h('th', null, 'Chỉ tiêu'), h('th', {className: 'r'}, 'Tháng này (VNĐ)'), h('th', {className: 'r'}, 'Kỳ trước (VNĐ)'), h('th', {className: 'r'}, 'Tăng trưởng'))),
-              h('tbody', null,
-                h('tr', null, h('td', {style:{fontWeight:'bold'}}, '1. Tổng Doanh thu'), h('td', {className: 'r', style:{fontWeight:'bold'}}, C.formatVND(pnlRev)), h('td', {className: 'r'}, C.formatVND(pnlRev*0.9)), h('td', {className: 'r wd-delta is-up'}, '▲ 11%')),
-                h('tr', null, h('td', {style:{paddingLeft:'24px'}}, 'Doanh thu Hàng bán'), h('td', {className: 'r'}, C.formatVND(pnlRev)), h('td', {className: 'r'}, C.formatVND(pnlRev*0.9)), h('td', null)),
-                h('tr', null, h('td', {style:{fontWeight:'bold'}}, '2. Các khoản giảm trừ'), h('td', {className: 'r', style:{fontWeight:'bold'}}, C.formatVND(pnlDiscount)), h('td', {className: 'r'}, C.formatVND(pnlDiscount*0.8)), h('td', null)),
-                h('tr', null, h('td', {style:{paddingLeft:'24px'}}, 'Chiết khấu / Giảm giá'), h('td', {className: 'r'}, C.formatVND(800000)), h('td', {className: 'r'}, C.formatVND(600000)), h('td', null)),
-                h('tr', null, h('td', {style:{paddingLeft:'24px'}}, 'Khuyến mại / Cashback'), h('td', {className: 'r'}, C.formatVND(400000)), h('td', {className: 'r'}, C.formatVND(400000)), h('td', null)),
-                h('tr', {style: {background: 'var(--surface-sunken)'}}, h('td', {style:{fontWeight:'bold'}}, '3. Doanh thu thuần (1-2)'), h('td', {className: 'r', style:{fontWeight:'bold'}}, C.formatVND(pnlNetRev)), h('td', {className: 'r'}, C.formatVND(pnlNetRev*0.9)), h('td', {className: 'r wd-delta is-up'}, '▲ 10%')),
-                h('tr', null, h('td', {style:{fontWeight:'bold'}}, '4. Giá vốn hàng bán (COGS)'), h('td', {className: 'r', style:{fontWeight:'bold'}}, C.formatVND(pnlCogs)), h('td', {className: 'r'}, C.formatVND(pnlCogs*0.85)), h('td', null)),
-                h('tr', {style: {background: 'var(--surface-sunken)'}}, h('td', {style:{fontWeight:'bold'}}, '5. Lợi nhuận gộp (3-4)'), h('td', {className: 'r', style:{fontWeight:'bold'}}, C.formatVND(pnlGross)), h('td', {className: 'r'}, C.formatVND(pnlGross*0.95)), h('td', {className: 'r wd-delta is-up'}, '▲ 5%')),
-                h('tr', null, h('td', {style:{fontWeight:'bold'}}, '6. Chi phí hoạt động (OPEX)'), h('td', {className: 'r', style:{fontWeight:'bold'}}, C.formatVND(pnlExpenses)), h('td', {className: 'r'}, C.formatVND(pnlExpenses*0.9)), h('td', null)),
-                h('tr', null, h('td', {style:{paddingLeft:'24px'}}, 'Lương nhân sự'), h('td', {className: 'r'}, C.formatVND(2000000)), h('td', {className: 'r'}, C.formatVND(2000000)), h('td', null)),
-                h('tr', null, h('td', {style:{paddingLeft:'24px'}}, 'Chi phí vận hành khác (Điện, nước)'), h('td', {className: 'r'}, C.formatVND(1200000)), h('td', {className: 'r'}, C.formatVND(1000000)), h('td', null)),
-                h('tr', {style: {background: 'var(--primary)', color: 'white'}}, h('td', {style:{fontWeight:'bold'}}, '7. Lợi nhuận thuần (5-6)'), h('td', {className: 'r', style:{fontWeight:'bold'}}, C.formatVND(pnlNetProfit)), h('td', {className: 'r'}, C.formatVND(pnlNetProfit*0.98)), h('td', {className: 'r', style: {color: 'white'}}, '▲ 2%'))
-              )
-            )
-          )
-        )
-      );
-    }
-
-    return h('div', { className: 'wd-page' },
-      h('div', { className: 'wd-head' }, 
-        h('div', null, 
-          h('h2', {style:{margin:0, display:'flex', alignItems:'center', gap:'8px'}}, 'Báo cáo & Phân tích',
-            h('span', { className: 'cp-tag', style: {background: 'var(--surface-sunken)', color: 'var(--ink)'} }, 'Tháng 10/2026')
-          ),
-          h('div', { className: 'wd-tabs', style: {marginTop:'16px'} },
-            h('button', { className: 'wd-tab ' + (cat==='overview'?'is-active':''), onClick: function(){setCat('overview')} }, 'Tổng quan'),
-            h('button', { className: 'wd-tab ' + (cat==='cashflow'?'is-active':''), onClick: function(){setCat('cashflow')} }, 'Dòng tiền & Ví'),
-            h('button', { className: 'wd-tab ' + (cat==='pnl'?'is-active':''), onClick: function(){setCat('pnl')} }, 'Kết quả HĐKD (P&L)')
-          )
-        ),
-        h('div', { className: 'wd-actions' },
-          h('div', { className: 'wd-seg', style: { marginRight: 'var(--space-4)' } },
-            h('button', null, 'Hôm nay'),
-            h('button', null, 'Tuần này'),
-            h('button', { 'aria-pressed': 'true' }, 'Tháng này')
-          ),
-          h('button', { className: 'cp-btn is-ghost', onClick: function(){ alert('Đang xuất báo cáo ra Excel...'); } }, h(C.Icon, {name: 'menu', size: 16}), ' Xuất Excel / PDF')
-        )
-      ),
-      h('div', { className: 'wd-body', style: { padding: 'var(--space-4)' } },
-        cat === 'overview' ? renderOverview() :
-        cat === 'cashflow' ? renderCashflow() :
-        renderPnL()
       )
     );
   }
@@ -1006,11 +960,11 @@
     function renderVibeTech() {
       return h('div', { className: 'wd-report-content', style: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' } },
         h('div', { className: 'cp-panel' },
-          h('div', { style: { padding: 'var(--space-4)', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+          h('div', { style: { padding: 'var(--space-4)', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
             h('h3', {style:{margin:0}}, 'Bảng kê phí dịch vụ Vibe Tech - Tháng 10/2026'),
             h('div', null,
-              h('button', { className: 'cp-btn is-ghost', style: {marginRight: '8px'}, onClick: function() { alert('Đã gửi yêu cầu tra soát phí cho Vibe Tech.'); } }, 'Yêu cầu tra soát'),
-              h('button', { className: 'cp-btn is-primary', onClick: function() { alert('Xác nhận bảng tính phí thành công!'); } }, 'Xác nhận bảng tính')
+              h('button', { className: 'cp-btn cp-btn-secondary', style: {marginRight: '8px'}, onClick: function() { alert('Đã gửi yêu cầu tra soát phí cho Vibe Tech.'); } }, 'Yêu cầu tra soát'),
+              h('button', { className: 'cp-btn cp-btn-primary', onClick: function() { alert('Xác nhận bảng tính phí thành công!'); } }, 'Xác nhận bảng tính')
             )
           ),
           h('div', { className: 'wd-table-wrap' },
@@ -1019,7 +973,7 @@
               h('tbody', null,
                 h('tr', null, h('td', null, 'Phí sử dụng nền tảng (SaaS)'), h('td', null, '1 tháng'), h('td', null, C.formatVND(500000)), h('td', {style:{fontWeight:'bold'}}, C.formatVND(500000)), h('td', null, 'Gói tiêu chuẩn')),
                 h('tr', null, h('td', null, 'Phí xử lý giao dịch ví'), h('td', null, '1,420 GD'), h('td', null, C.formatVND(1000)), h('td', {style:{fontWeight:'bold'}}, C.formatVND(1420000)), h('td', null, 'Theo thực tế phát sinh')),
-                h('tr', {style: {background: 'var(--surface-sunken)'}}, h('td', {colSpan:3, style:{fontWeight:'bold', textAlign:'right'}}, 'Tổng phí phải trả:'), h('td', {style:{fontWeight:'bold', color:'var(--danger)'}}, C.formatVND(1920000)), h('td', null, h('button', { className: 'cp-btn is-sm', onClick: function() { alert('Đã ghi nhận vào chi phí hoạt động kinh doanh'); } }, 'Ghi nhận chi phí')))
+                h('tr', {style: {background: 'var(--surface-sunken)'}}, h('td', {colSpan:3, style:{fontWeight:'bold', textAlign:'right'}}, 'Tổng phí phải trả:'), h('td', {style:{fontWeight:'bold', color:'var(--danger)'}}, C.formatVND(1920000)), h('td', null, h('button', { className: 'cp-btn cp-btn-secondary cp-btn-sm', onClick: function() { alert('Đã ghi nhận vào chi phí hoạt động kinh doanh'); } }, 'Ghi nhận chi phí')))
               )
             )
           )
@@ -1035,9 +989,9 @@
           h('div', { className: 'wd-kpi' }, h('label', null, h(C.Icon, {name:'card', size:16}), 'Thuế GTGT/TNDN tạm tính'), h('div', { className: 'wd-kpi-val' }, C.formatVND(1250000)))
         ),
         h('div', { className: 'cp-panel' },
-           h('div', { style: { padding: 'var(--space-4)', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+           h('div', { style: { padding: 'var(--space-4)', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
             h('h3', {style:{margin:0}}, 'Khóa sổ kỳ kế toán'),
-            h('button', { className: 'cp-btn is-danger', onClick: function() { alert('Đã khóa sổ kỳ kế toán. Không thể thay đổi giao dịch gốc.'); } }, h(C.Icon, {name:'settings', size:16}), ' Khóa sổ (Lock Period)')
+            h('button', { className: 'cp-btn cp-btn-danger', onClick: function() { alert('Đã khóa sổ kỳ kế toán. Không thể thay đổi giao dịch gốc.'); } }, h(C.Icon, {name:'lock', size:16}), ' Khóa sổ (Lock Period)')
           ),
           h('div', { style: { padding: 'var(--space-4)' } },
             h('p', null, 'Tình trạng: ', h('strong', {style:{color:'var(--success)'}}, 'Đang mở (Tháng 10/2026)')),
@@ -1050,13 +1004,13 @@
     function renderIntegration() {
       return h('div', { className: 'wd-report-content', style: { display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' } },
         h('div', { className: 'cp-panel' },
-          h('div', { style: { padding: 'var(--space-4)', borderBottom: '1px solid var(--border)' } },
+          h('div', { style: { padding: 'var(--space-4)', borderBottom: '1px solid var(--line)' } },
             h('h3', {style:{margin:0}}, 'Kết nối phần mềm kế toán')
           ),
           h('div', { style: { padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: '16px' } },
             h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-sunken)', padding: '16px', borderRadius: '8px' } },
               h('div', null, h('b', {style:{fontSize:'16px'}}, 'MISA AMIS'), h('p', {className:'cp-muted', style:{margin:'4px 0 0 0'}}, 'Đồng bộ hóa đơn, phiếu nhập/xuất và danh mục khách hàng.')),
-              h('button', { className: 'cp-btn is-primary', onClick: function() { alert('Đã kết nối tới MISA AMIS'); } }, 'Đang kết nối')
+              h('button', { className: 'cp-btn cp-btn-primary', onClick: function() { alert('Đã kết nối tới MISA AMIS'); } }, 'Đang kết nối')
             ),
             h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface-sunken)', padding: '16px', borderRadius: '8px' } },
               h('div', null, h('b', {style:{fontSize:'16px'}}, 'FAST Accounting'), h('p', {className:'cp-muted', style:{margin:'4px 0 0 0'}}, 'Đồng bộ chứng từ kế toán qua API.')),
@@ -1248,69 +1202,80 @@
   function App() {
     var [data, setData] = useState(function() { return WD.load(); });
     var [tab, setTab] = useState('reports');
-    var [isDark, setIsDark] = useState(function() { return localStorage.getItem('wd_dark') === '1'; });
     
     useEffect(function() {
       WD.save(data);
+      document.documentElement.classList.remove('dark'); // Force Light Mode
     }, [data]);
 
-    useEffect(function() {
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('wd_dark', '1');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('wd_dark', '0');
-      }
-    }, [isDark]);
-
-    var TABS = [
-      { id: 'reports', label: 'Báo cáo', icon: 'receipt' },
-      { id: 'orders', label: 'Đơn hàng', icon: 'check' },
-      { id: 'menu', label: 'Thực đơn', icon: 'bag' },
-      { id: 'inventory', label: 'Kho', icon: 'alert' },
-      { id: 'promo', label: 'Khuyến mại', icon: 'card' },
-      { id: 'wallet', label: 'Ví & Nạp', icon: 'cash' },
-      { id: 'payments', label: 'Ca & TT', icon: 'clock' },
-      { id: 'expenses', label: 'Chi phí', icon: 'cash' },
-      { id: 'accounting', label: 'Kế toán', icon: 'settings' },
-      { id: 'accounts', label: 'Khách hàng', icon: 'users' },
-      { id: 'system', label: 'Hệ thống', icon: 'user' }
-    ];
-
     return h('div', { className: 'wd-app' },
-      h('header', { className: 'wd-top cp-top' },
-        h('div', { className: 'cp-top-name', style: { marginRight: 'var(--space-4)' } }, h('b', null, 'Canteen')),
-        h('nav', { className: 'wd-nav' }, TABS.map(function(t) {
-          return h('button', { key: t.id, className: 'wd-nav-btn', 'aria-selected': String(tab === t.id), onClick: function() { setTab(t.id); } },
-            h(C.Icon, { name: t.icon, size: 18 }), t.label);
-        })),
-        h('div', { className: 'cp-top-spacer' }),
-        h('button', { className: 'wd-icon-btn', style: { marginRight: 'var(--space-3)' }, onClick: function() { setIsDark(!isDark); }, 'aria-label': 'Toggle Dark Mode' }, 
-           h('svg', { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' },
-             isDark 
-               ? [ h('circle', { key: '1', cx: 12, cy: 12, r: 5 }), h('path', { key: '2', d: 'M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42' }) ]
-               : h('path', { d: 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' })
-           )
+      h('aside', { className: 'wd-sidebar' },
+        h('div', { className: 'wd-sidebar-logo' }, 
+           h('b', null, 'Canteen ', h('span', {style:{color:'#3b82f6'}}, 'POS')), 
+           h('div', { style: { fontSize: '10px', color: '#9ca3af', letterSpacing: '0.05em', marginTop: '4px' } }, 'QUẢN LÝ ĐỐI TÁC')
         ),
-        h('div', { className: 'wd-user' },
-          h('div', null, WD.OWNER.name, h('small', null, WD.OWNER.title)),
-          h('span', { className: 'wd-avatar cp-avatar' }, WD.initials(WD.OWNER.name))
+        h('div', { className: 'wd-sidebar-menu' },
+          h('div', { className: 'wd-sidebar-label' }, 'TỔNG QUAN'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='reports' && 'is-active'), onClick: function(){setTab('reports');} }, h(C.Icon, {name:'home', size:16}), 'Tổng quan'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='pending' && 'is-active') }, h(C.Icon, {name:'clock', size:16}), 'Việc chờ duyệt'),
+          
+          h('div', { className: 'wd-sidebar-label' }, 'VẬN HÀNH'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='system' && 'is-active'), onClick: function(){setTab('system');} }, h(C.Icon, {name:'home', size:16}), 'Canteen & nhân viên'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='accounts' && 'is-active'), onClick: function(){setTab('accounts');} }, h(C.Icon, {name:'users', size:16}), 'HS, GV & phụ huynh'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='menu' && 'is-active'), onClick: function(){setTab('menu');} }, h(C.Icon, {name:'bag', size:16}), 'Thực đơn & giá'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='orders' && 'is-active'), onClick: function(){setTab('orders');} }, h(C.Icon, {name:'doc', size:16}), 'Đơn hàng'),
+
+          h('div', { className: 'wd-sidebar-label' }, 'TÀI CHÍNH'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='wallet' && 'is-active'), onClick: function(){setTab('wallet');} }, h(C.Icon, {name:'cash', size:16}), 'Tiền nạp & số dư'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='payments' && 'is-active'), onClick: function(){setTab('payments');} }, h(C.Icon, {name:'card', size:16}), 'Thanh toán & ca'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='promo' && 'is-active'), onClick: function(){setTab('promo');} }, h(C.Icon, {name:'star', size:16}), 'Khuyến mại & giảm trừ'),
+
+          h('div', { className: 'wd-sidebar-label' }, 'KHO & GIÁ VỐN'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='inventory' && 'is-active'), onClick: function(){setTab('inventory');} }, h(C.Icon, {name:'archive', size:16}), 'Kho & nhà cung cấp'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='recipes' && 'is-active') }, h(C.Icon, {name:'clipboard', size:16}), 'Định lượng & giá vốn'),
+
+          h('div', { className: 'wd-sidebar-label' }, 'QUẢN TRỊ'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='expenses' && 'is-active'), onClick: function(){setTab('expenses');} }, h(C.Icon, {name:'doc', size:16}), 'Chi phí & nhân sự'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='accounting' && 'is-active'), onClick: function(){setTab('accounting');} }, h(C.Icon, {name:'pie-chart', size:16}), 'Báo cáo lãi lỗ'),
+          h('button', { className: cx('wd-sidebar-btn', tab==='fees' && 'is-active') }, h(C.Icon, {name:'settings', size:16}), 'Kế toán & phí dịch vụ')
         )
       ),
-      h('main', { className: 'wd-main' },
-        tab === 'reports' ? h(ReportsTab, { data: data }) :
-        tab === 'orders' ? h(OrdersTab, { data: data }) :
-        tab === 'menu' ? h(MenuTab, { data: data, setData: setData }) :
-        tab === 'inventory' ? h(InventoryTab, { data: data }) :
-        tab === 'promo' ? h(PromoTab, { data: data }) :
-        tab === 'wallet' ? h(WalletTab, { data: data }) :
-        tab === 'payments' ? h(PaymentsTab, { data: data }) :
-        tab === 'expenses' ? h(ExpensesTab, { data: data }) :
-        tab === 'accounting' ? h(AccountingTab, { data: data }) :
-        tab === 'accounts' ? h(AccountsTab, { data: data, setData: setData }) :
-        tab === 'system' ? h(SystemTab, { data: data }) :
-        tab === 'import' ? h(ImportTab, { data: data, setData: setData }) : null
+      h('div', { className: 'wd-main-wrapper' },
+        h('header', { className: 'wd-main-header' },
+          h('div', { className: 'wd-header-left' },
+            h('button', { className: 'wd-canteen-select' }, h(C.Icon, {name:'home', size:16}), ' Tất cả canteen ', h(C.Icon, {name:'chevron-down', size:16})),
+            h('div', { className: 'wd-date-seg' }, 
+              h('button', null, 'Hôm nay'),
+              h('button', { className: 'is-active' }, '7 ngày'),
+              h('button', null, '30 ngày')
+            )
+          ),
+          h('div', { className: 'wd-header-right' },
+            h('button', { className: 'wd-icon-btn', style:{background:'#fff', border:'1px solid var(--line)', borderRadius:'50%', width:'32px', height:'32px'} }, h(C.Icon, {name:'bell', size:16})),
+            h('div', { className: 'wd-user-profile' },
+              h('div', { className: 'wd-avatar', style:{background:'#e0e7ff', color:'#3b82f6', width:'32px', height:'32px'} }, 'T'),
+              h('div', { className: 'wd-user-info' },
+                h('b', null, 'Chủ Quán Test'),
+                h('small', {style:{color:'#6b7280', fontSize:'12px', display:'block', fontWeight:400}}, 'Chủ canteen')
+              ),
+              h(C.Icon, {name:'chevron-down', size:16, style:{color:'#9ca3af'}})
+            )
+          )
+        ),
+        h('main', { className: 'wd-main-content' },
+          tab === 'reports' ? h(ReportsTab, { data: data }) :
+          tab === 'orders' ? h(OrdersTab, { data: data }) :
+          tab === 'menu' ? h(MenuTab, { data: data, setData: setData }) :
+          tab === 'inventory' ? h(InventoryTab, { data: data }) :
+          tab === 'promo' ? h(PromoTab, { data: data }) :
+          tab === 'wallet' ? h(WalletTab, { data: data }) :
+          tab === 'payments' ? h(PaymentsTab, { data: data }) :
+          tab === 'expenses' ? h(ExpensesTab, { data: data }) :
+          tab === 'accounting' ? h(AccountingTab, { data: data }) :
+          tab === 'accounts' ? h(AccountsTab, { data: data, setData: setData }) :
+          tab === 'system' ? h(SystemTab, { data: data }) :
+          tab === 'import' ? h(ImportTab, { data: data, setData: setData }) : null
+        )
       )
     );
   }
